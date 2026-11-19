@@ -6,12 +6,10 @@ import { formatRelativeDate } from "@/lib/utils";
 import {
   ShieldAlert,
   Phone,
-  Mail,
+  MessageSquare,
   CheckCircle2,
   Clock,
   Star,
-  MessageSquare,
-  AlertOctagon,
 } from "lucide-react";
 
 export default function PrivateFeedbackInbox() {
@@ -22,44 +20,38 @@ export default function PrivateFeedbackInbox() {
   return (
     <div className="space-y-6">
       {/* Header explanation */}
-      <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-500/10 via-rose-500/10 to-slate-900 border border-purple-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 rounded-full bg-purple-400/20 text-purple-300 font-semibold text-[11px] uppercase tracking-wider">
-              Google Rating Shield
-            </span>
-            <span className="text-xs text-slate-400">
-              Private Feedback Intercepts
+            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              Customer Experience Shield
             </span>
           </div>
-          <h2 className="text-xl font-black text-white tracking-tight">
-            Complaints intercepted before touching Google Maps
+          <h2 className="text-lg font-bold text-white tracking-tight">
+            Private Complaints Intercepted
           </h2>
-          <p className="text-xs text-slate-300 mt-1 max-w-xl">
-            When a customer clicks 👎 on your funnel, their complaint is routed directly to this inbox instead of a public 1-star review on Google. Reach out fast to resolve the problem!
+          <p className="text-xs text-zinc-400 mt-1 max-w-xl leading-relaxed">
+            When a customer clicks 👎 on your review funnel, their feedback is routed directly here instead of a public 1-star review on Google Maps.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-slate-950/80 px-4 py-3 rounded-2xl border border-slate-800">
-          <div className="text-2xl font-black text-purple-400">
+        <div className="flex items-center gap-2.5 bg-zinc-950 px-4 py-2.5 rounded-lg border border-zinc-800 flex-shrink-0">
+          <div className="text-xl font-bold text-white">
             {unresolvedCount}
           </div>
-          <div className="text-xs text-slate-300">
-            <strong>Unresolved</strong>
-            <p className="text-[10px] text-slate-500">Require owner call-back</p>
+          <div className="text-xs text-zinc-400">
+            <strong className="text-zinc-200">Pending Resolution</strong>
+            <p className="text-[10px] text-zinc-500">Require owner outreach</p>
           </div>
         </div>
       </div>
 
       {/* List of Feedback */}
       {feedback.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl border border-slate-800 bg-slate-900/40 space-y-3">
-          <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-xl">
-            🛡️
-          </div>
-          <h3 className="text-base font-bold text-white">Inbox Clean</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            No unhappy customer feedback recorded. Any customer who clicks 👎 on your review funnel will alert you here immediately.
+        <div className="p-10 text-center rounded-xl border border-zinc-800 bg-zinc-900/40 space-y-2">
+          <h3 className="text-sm font-semibold text-white">Inbox Clean</h3>
+          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+            No complaints recorded. If a client taps &quot;Could be better&quot;, their message will appear here immediately.
           </p>
         </div>
       ) : (
@@ -68,66 +60,62 @@ export default function PrivateFeedbackInbox() {
             return (
               <div
                 key={item.id}
-                className={`p-5 rounded-2xl border transition-all ${
+                className={`p-4 rounded-xl border transition-all ${
                   item.resolved
-                    ? "bg-slate-900/30 border-slate-800/60 opacity-75"
-                    : "bg-slate-900/80 border-purple-500/30 shadow-lg shadow-purple-500/5"
+                    ? "bg-zinc-900/30 border-zinc-800/60 opacity-70"
+                    : "bg-zinc-900 border-zinc-750"
                 }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800/80">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-800/80">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-sm">
-                      👎
-                    </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-white text-sm">
+                        <span className="font-semibold text-white text-xs">
                           {item.customerName}
                         </span>
-                        {/* Rating stars */}
                         <div className="flex items-center text-amber-400 text-xs">
                           {Array.from({ length: 3 }).map((_, idx) => (
                             <Star
                               key={idx}
                               className={`w-3 h-3 ${
                                 idx < item.rating
-                                  ? "fill-amber-400 text-amber-400"
-                                  : "text-slate-700"
+                                  ? "fill-current text-amber-400"
+                                  : "text-zinc-700"
                               }`}
                             />
                           ))}
                         </div>
                       </div>
-                      <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                      <div className="text-[11px] text-zinc-400 flex items-center gap-2 mt-0.5">
                         {item.customerPhone && (
                           <span>Phone: {item.customerPhone}</span>
                         )}
                         {item.customerEmail && (
-                          <span>• Email: {item.customerEmail}</span>
+                          <span>• {item.customerEmail}</span>
                         )}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-slate-500 flex items-center gap-1 text-[11px]">
+                    <span className="text-zinc-500 flex items-center gap-1 text-[11px]">
                       <Clock className="w-3 h-3" />
                       {formatRelativeDate(item.submittedAt)}
                     </span>
                     {item.resolved ? (
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-800 text-zinc-400 border border-zinc-700">
                         Resolved
                       </span>
                     ) : (
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30 animate-pulse">
-                        Urgent Attention
+                      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20">
+                        Needs Call
                       </span>
                     )}
                   </div>
                 </div>
 
                 {/* Feedback Body */}
-                <div className="py-3 text-xs text-slate-200 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 my-2.5 font-medium leading-relaxed">
+                <div className="py-2.5 text-xs text-zinc-300 bg-zinc-950 p-3 rounded-lg border border-zinc-850 my-2 leading-relaxed font-mono">
                   &quot;{item.feedback}&quot;
                 </div>
 
@@ -137,19 +125,19 @@ export default function PrivateFeedbackInbox() {
                     {item.customerPhone && (
                       <a
                         href={`tel:${item.customerPhone}`}
-                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        className="px-2.5 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-750 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors"
                       >
-                        <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                        <Phone className="w-3.5 h-3.5 text-zinc-400" />
                         <span>Call Customer</span>
                       </a>
                     )}
                     {item.customerPhone && (
                       <a
-                        href={`sms:${item.customerPhone}?body=Hi ${item.customerName}, this is the owner of ${item.feedback ? "" : ""}. I saw your note and wanted to reach out right away to make things right for you.`}
-                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        href={`sms:${item.customerPhone}?body=Hi ${item.customerName}, following up regarding your recent service.`}
+                        className="px-2.5 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-750 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors"
                       >
-                        <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Send Apology SMS</span>
+                        <MessageSquare className="w-3.5 h-3.5 text-zinc-400" />
+                        <span>SMS Customer</span>
                       </a>
                     )}
                   </div>
@@ -157,10 +145,10 @@ export default function PrivateFeedbackInbox() {
                   {!item.resolved && (
                     <button
                       onClick={() => resolveFeedback(item.id)}
-                      className="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                      className="px-3 py-1.5 rounded-md bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Mark Issue Resolved</span>
+                      <span>Mark Resolved</span>
                     </button>
                   )}
                 </div>

@@ -19,19 +19,19 @@ export interface BusinessProfile {
   logoUrl?: string;
   phone?: string;
   email?: string;
-  placeId: string; // Google Place ID e.g. ChIJ...
+  placeId: string;
   googleReviewUrl?: string;
   onboardingCompleted: boolean;
   trialKey: string;
-  trialStartDate: string; // ISO date
-  trialDurationDays: number; // 7 or 14
+  trialStartDate: string;
+  trialDurationDays: number;
   isSubscribed: boolean;
   subscriptionPlan?: "starter_monthly_29";
   userEmail?: string;
   isAnonymousAuth: boolean;
   autoRemindDay3: boolean;
-  b2cReferralReward: number; // e.g. 20 ($20)
-  b2cDiscountAmount: number; // e.g. 20 ($20)
+  b2cReferralReward: number; // $20
+  b2cDiscountAmount: number; // $20
 }
 
 export type ContactStatus =
@@ -49,7 +49,7 @@ export interface CustomerContact {
   phone: string;
   email: string;
   serviceRendered: string;
-  serviceDate: string; // YYYY-MM-DD
+  serviceDate: string;
   status: ContactStatus;
   requestSentAt?: string;
   lastRemindedAt?: string;
@@ -69,26 +69,38 @@ export interface PrivateFeedback {
   contactId?: string;
 }
 
+export type ReferralStatus =
+  | "active" // Code active, waiting for friend
+  | "job_booked" // Friend booked job with code (pending service & payment)
+  | "purchased" // Friend completed & paid for service -> REWARD UNLOCKED for referrer!
+  | "credit_applied"; // Referrer's $20 reward credited/paid
+
 export interface B2CReferral {
   id: string;
   referrerName: string;
   referrerPhone?: string;
   referrerEmail?: string;
-  code: string; // e.g. ALEX-20
+  code: string; // e.g. DAVID-20
   rewardAmount: number; // $20
   discountAmount: number; // $20
   friendName?: string;
   friendPhone?: string;
-  status: "active" | "redeemed" | "reward_paid";
+  friendEmail?: string;
+  friendServiceNeeded?: string;
+  friendPreferredDate?: string;
+  invoiceAmount?: number; // e.g. $180
+  status: ReferralStatus;
   createdAt: string;
-  redeemedAt?: string;
+  bookedAt?: string;
+  purchasedAt?: string;
+  rewardAppliedAt?: string;
 }
 
 export interface B2BPartnerStats {
   unlocked: boolean;
   reviewsCount: number;
   reviewsTarget: number; // 5
-  partnerCode: string; // e.g. PARTNER-APEX
+  partnerCode: string;
   referredBusinessesCount: number;
   monthsFreeEarned: number;
 }
@@ -96,8 +108,8 @@ export interface B2BPartnerStats {
 export interface FunnelStats {
   totalRequestsSent: number;
   funnelViews: number;
-  positiveClicks: number; // Thumb Up -> Google Review
-  negativeFeedbackCount: number; // Thumb Down -> Private
+  positiveClicks: number;
+  negativeFeedbackCount: number;
   referralCodesShared: number;
   googleReviewsAddedEstimate: number;
 }

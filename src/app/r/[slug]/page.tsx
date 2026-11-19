@@ -5,21 +5,15 @@ import { useSearchParams } from "next/navigation";
 import { useApp } from "@/lib/store";
 import { buildGoogleReviewUrl } from "@/lib/utils";
 import {
-  Sparkles,
   ThumbsUp,
   ThumbsDown,
   ExternalLink,
   ShieldCheck,
-  Share2,
-  Gift,
-  CheckCircle2,
-  Send,
   Star,
   Copy,
   Check,
-  MessageSquare,
+  ArrowRight,
 } from "lucide-react";
-import confetti from "canvas-confetti";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -48,7 +42,6 @@ function ReviewFunnelContent({ params }: PageProps) {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
 
-  // Auto-fill customer info if contact ID matches
   useEffect(() => {
     if (contactId && contacts.length > 0) {
       const match = contacts.find((c) => c.id === contactId);
@@ -59,7 +52,6 @@ function ReviewFunnelContent({ params }: PageProps) {
     }
   }, [contactId, contacts]);
 
-  // Track visit on mount
   useEffect(() => {
     recordFunnelVisit(slug);
   }, [slug]);
@@ -74,24 +66,15 @@ function ReviewFunnelContent({ params }: PageProps) {
     (contactId && contacts.find((c) => c.id === contactId)?.referralCode) ||
     "FRIEND-20";
 
-  // 👍 High-Intent Positive Experience
   const handleThumbsUp = () => {
     recordPositiveReviewClick(slug, contactId);
     setStep("positive");
-
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-
-    // Auto-redirect to Google after 2.5 seconds to give user time to see the thank you & referral code
+    // Open in new window after short pause
     setTimeout(() => {
       window.open(googleReviewUrl, "_blank");
-    }, 2500);
+    }, 2000);
   };
 
-  // 👎 Intercept Negative Experience Privately
   const handleThumbsDown = () => {
     setStep("negative");
   };
@@ -114,178 +97,155 @@ function ReviewFunnelContent({ params }: PageProps) {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     const voucherUrl = `${origin}/referral/${referralCode}`;
     navigator.clipboard.writeText(
-      `Hey! Use my referral code ${referralCode} to get $${profile.b2cDiscountAmount} off at ${businessName}: ${voucherUrl}`
+      `Hey, I had service done with ${businessName}. Here is a $${profile.b2cDiscountAmount} discount voucher towards your first service: ${voucherUrl}`
     );
     setCopiedCode(true);
     setTimeout(() => setCopiedCode(false), 2000);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between p-4 sm:p-6 font-sans">
-      {/* Top micro brand */}
-      <header className="max-w-md w-full mx-auto flex items-center justify-between text-xs text-slate-500 py-2">
-        <span className="font-semibold text-slate-400">{businessName}</span>
-        <span className="flex items-center gap-1 text-[11px]">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          Verified Customer Review
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col justify-between p-4 sm:p-8 font-sans selection:bg-zinc-800 selection:text-white">
+      {/* Top Header */}
+      <header className="max-w-md w-full mx-auto flex items-center justify-between text-xs text-zinc-400 py-3">
+        <span className="font-medium text-zinc-300">{businessName}</span>
+        <span className="flex items-center gap-1.5 text-zinc-500 text-[11px]">
+          <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
+          Verified Customer Feedback
         </span>
       </header>
 
-      {/* Main Funnel Card */}
-      <main className="max-w-md w-full mx-auto my-auto bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 text-center relative overflow-hidden">
-        {/* Subtle accent glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-b-full" />
-
-        {/* Business Logo & Greeting */}
+      {/* Main Review Card */}
+      <main className="max-w-md w-full mx-auto my-auto bg-zinc-900 border border-zinc-800 rounded-2xl shadow-sm p-6 sm:p-8 text-center">
+        {/* Business Logo & Heading */}
         <div className="mb-6">
-          <div className="w-20 h-20 rounded-2xl overflow-hidden mx-auto border-2 border-slate-700 shadow-xl bg-slate-950 mb-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={
-                profile.logoUrl ||
-                "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=150&auto=format&fit=crop&q=80"
-              }
-              alt={businessName}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {profile.logoUrl && (
+            <div className="w-16 h-16 rounded-xl overflow-hidden mx-auto border border-zinc-800 bg-zinc-950 mb-3.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={profile.logoUrl}
+                alt={businessName}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <h1 className="text-xl font-bold text-white tracking-tight">
             {businessName}
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Thank you for trusting us with your service!
+          <p className="text-xs text-zinc-400 mt-1">
+            Thank you for trusting our team with your recent service.
           </p>
         </div>
 
-        {/* STEP 1: Main Thumb Prompt */}
+        {/* STEP 1: Main Prompt */}
         {step === "prompt" && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800">
-              <h2 className="text-base sm:text-lg font-bold text-white">
+          <div className="space-y-6">
+            <div className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-800/80">
+              <h2 className="text-sm sm:text-base font-semibold text-white">
                 How was your experience with us?
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Your feedback helps our local team continue providing great service.
+              <p className="text-xs text-zinc-400 mt-1">
+                Please select an option below:
               </p>
             </div>
 
-            {/* 👍 and 👎 Buttons */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3.5">
               <button
                 onClick={handleThumbsUp}
-                className="p-5 rounded-2xl bg-gradient-to-b from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/30 hover:border-emerald-500 text-emerald-300 font-bold flex flex-col items-center justify-center gap-3 transition-all transform active:scale-95 group shadow-lg shadow-emerald-500/5 cursor-pointer"
+                className="p-4 rounded-xl bg-zinc-950 hover:bg-zinc-850 border border-zinc-800 hover:border-zinc-700 text-zinc-200 font-medium flex flex-col items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer"
               >
-                <span className="text-4xl group-hover:scale-125 transition-transform duration-200">
-                  👍
-                </span>
-                <span className="text-sm font-bold">Great! Loved it</span>
+                <ThumbsUp className="w-6 h-6 text-emerald-400" />
+                <span className="text-xs font-semibold">Great Experience</span>
               </button>
 
               <button
                 onClick={handleThumbsDown}
-                className="p-5 rounded-2xl bg-gradient-to-b from-rose-500/20 to-rose-600/10 border-2 border-rose-500/30 hover:border-rose-500 text-rose-300 font-bold flex flex-col items-center justify-center gap-3 transition-all transform active:scale-95 group shadow-lg shadow-rose-500/5 cursor-pointer"
+                className="p-4 rounded-xl bg-zinc-950 hover:bg-zinc-850 border border-zinc-800 hover:border-zinc-700 text-zinc-200 font-medium flex flex-col items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer"
               >
-                <span className="text-4xl group-hover:scale-125 transition-transform duration-200">
-                  👎
-                </span>
-                <span className="text-sm font-bold">Could be better</span>
+                <ThumbsDown className="w-6 h-6 text-zinc-400" />
+                <span className="text-xs font-semibold">Could Be Better</span>
               </button>
             </div>
           </div>
         )}
 
-        {/* STEP 2: POSITIVE FLOW (Redirects to Google Review + B2C Referral) */}
+        {/* STEP 2: Positive Experience */}
         {step === "positive" && (
-          <div className="space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto text-2xl">
-              🎉
-            </div>
-
-            <div>
-              <h2 className="text-lg font-bold text-white">
-                Thank you so much!
+          <div className="space-y-4 text-left">
+            <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2 text-center">
+              <h2 className="text-sm font-semibold text-white">
+                Thank you for your feedback!
               </h2>
-              <p className="text-xs text-slate-300 mt-1">
-                Opening Google Maps to leave your 5-star review now...
+              <p className="text-xs text-zinc-400">
+                Opening Google Maps to share your review with our team...
               </p>
             </div>
 
-            {/* Direct Google Review Button */}
             <a
               href={googleReviewUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2 transition-all"
+              className="w-full py-2.5 px-4 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
-              <span>Tap to Open Google Review</span>
-              <ExternalLink className="w-4 h-4" />
+              <span>Write Review on Google Maps</span>
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
 
-            {/* B2C Referral Card Loop */}
-            <div className="mt-4 p-4 rounded-2xl bg-slate-950/80 border border-emerald-500/30 text-left space-y-2.5">
-              <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
-                <Gift className="w-4 h-4" />
-                <span>Double Referral Reward for You</span>
+            {/* B2C Referral Section with explicit Purchase Rule */}
+            <div className="p-4 rounded-xl bg-zinc-950/80 border border-zinc-800 space-y-2 text-xs">
+              <div className="font-semibold text-zinc-200 flex items-center justify-between">
+                <span>Client Referral Privilege</span>
+                <span className="font-mono text-zinc-400">{referralCode}</span>
               </div>
-              <p className="text-xs text-slate-300">
-                Give a friend <strong className="text-emerald-400">${profile.b2cDiscountAmount} off</strong> their first service, and you&apos;ll get <strong className="text-emerald-400">${profile.b2cReferralReward} back</strong>!
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
+                Send your referral link to friends or neighbors. They receive <strong>${profile.b2cDiscountAmount} off</strong> their first service. Once their job is completed and paid, you unlock a <strong>${profile.b2cReferralReward} credit</strong> on your next service invoice.
               </p>
 
-              <div className="flex items-center justify-between gap-2 p-2 bg-slate-900 rounded-xl border border-slate-800">
-                <span className="font-mono font-bold text-amber-400 text-xs pl-2">
-                  {referralCode}
-                </span>
-                <button
-                  onClick={copyReferralCode}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold flex items-center gap-1 transition-colors"
-                >
-                  {copiedCode ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Share $20 Voucher</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              <button
+                onClick={copyReferralCode}
+                className="w-full py-2 px-3 rounded-md bg-zinc-800 hover:bg-zinc-750 text-zinc-200 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer mt-2"
+              >
+                {copiedCode ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Link Copied to Clipboard</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy $20 Referral Link</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         )}
 
-        {/* STEP 3: NEGATIVE FLOW (Private Feedback Form + Google Fallback) */}
+        {/* STEP 3: Private Feedback Intercept */}
         {step === "negative" && (
-          <div className="space-y-4 text-left animate-in zoom-in-95 duration-200">
+          <div className="space-y-4 text-left">
             {feedbackSubmitted ? (
-              <div className="text-center py-6 space-y-3">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto text-2xl">
-                  ✉️
-                </div>
-                <h3 className="text-base font-bold text-white">
-                  Message Sent Directly to the Owner
+              <div className="text-center py-6 space-y-2">
+                <h3 className="text-sm font-semibold text-white">
+                  Thank you for your candid feedback.
                 </h3>
-                <p className="text-xs text-slate-300 max-w-xs mx-auto">
-                  Thank you for letting us know. The owner will review your note personally and reach out to make things right.
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Your message has been delivered directly to the owner. We will follow up to ensure your concerns are properly addressed.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleFeedbackSubmit} className="space-y-3.5">
-                <div className="text-center mb-2">
-                  <h3 className="text-base font-bold text-rose-300">
-                    We&apos;re so sorry we didn&apos;t meet your expectations.
+                <div className="text-center">
+                  <h3 className="text-sm font-semibold text-zinc-200">
+                    We&apos;re sorry your experience fell short.
                   </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Please let the owner know what happened so we can make it right:
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Please let the owner know directly so we can resolve this:
                   </p>
                 </div>
 
-                {/* Rating selection (1-3 stars) */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Your Rating:
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                    Rating
                   </label>
                   <div className="flex items-center gap-2">
                     {[1, 2, 3].map((star) => (
@@ -293,21 +253,21 @@ function ReviewFunnelContent({ params }: PageProps) {
                         type="button"
                         key={star}
                         onClick={() => setRating(star)}
-                        className={`p-2 rounded-xl border flex items-center gap-1 text-xs font-bold transition-all ${
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer ${
                           rating === star
-                            ? "bg-amber-500/20 border-amber-500 text-amber-300"
-                            : "bg-slate-950 border-slate-800 text-slate-500"
+                            ? "bg-zinc-800 border-zinc-600 text-white"
+                            : "bg-zinc-950 border-zinc-800 text-zinc-500"
                         }`}
                       >
-                        <Star className="w-3.5 h-3.5 fill-current" />
-                        <span>{star} Star{star > 1 ? "s" : ""}</span>
+                        <Star className="w-3 h-3 fill-current" />
+                        <span>{star}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">
                     What could we have done better? *
                   </label>
                   <textarea
@@ -315,55 +275,54 @@ function ReviewFunnelContent({ params }: PageProps) {
                     rows={3}
                     value={feedbackText}
                     onChange={(e) => setFeedbackText(e.target.value)}
-                    placeholder="Tell us what went wrong..."
-                    className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                    placeholder="Details about your service..."
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 mb-1">
+                    <label className="block text-xs font-medium text-zinc-400 mb-1">
                       Your Name
                     </label>
                     <input
                       type="text"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Your name"
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                      placeholder="Name"
+                      className="w-full px-2.5 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 mb-1">
-                      Your Phone (to follow up)
+                    <label className="block text-xs font-medium text-zinc-400 mb-1">
+                      Phone Number
                     </label>
                     <input
-                      type="text"
+                      type="tel"
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       placeholder="(555) 000-0000"
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                      className="w-full px-2.5 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-md"
+                  className="w-full py-2.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs transition-colors cursor-pointer"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Send Private Feedback to Owner</span>
+                  Submit Private Feedback to Owner
                 </button>
 
-                {/* Submitting to Google Fallback (Strict Google Review Policy Compliance) */}
-                <div className="text-center pt-3 border-t border-slate-800/80">
-                  <p className="text-[11px] text-slate-400">
-                    We value open and honest feedback. If you still prefer to post a public review directly on Google Maps, you may{" "}
+                {/* Google Policy Compliance Link */}
+                <div className="text-center pt-2">
+                  <p className="text-[11px] text-zinc-500">
+                    If you prefer to leave a public review on Google Maps instead,{" "}
                     <a
                       href={googleReviewUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-amber-400 hover:underline inline-flex items-center gap-0.5"
+                      className="text-zinc-400 hover:text-white underline inline-flex items-center gap-0.5"
                     >
                       <span>click here</span>
                       <ExternalLink className="w-2.5 h-2.5" />
@@ -377,9 +336,8 @@ function ReviewFunnelContent({ params }: PageProps) {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="max-w-md w-full mx-auto text-center text-[10px] text-slate-600 py-3">
-        Protected by Vouchr Smart Review Funnel • Powered by Local Pro Services
+      <footer className="max-w-md w-full mx-auto text-center text-[11px] text-zinc-600 py-3">
+        {businessName} • Client Review Funnel
       </footer>
     </div>
   );
@@ -389,7 +347,7 @@ export default function ReviewFunnelPage(props: PageProps) {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 text-slate-400 text-xs flex items-center justify-center">
+        <div className="min-h-screen bg-zinc-950 text-zinc-400 text-xs flex items-center justify-center">
           Loading review funnel...
         </div>
       }

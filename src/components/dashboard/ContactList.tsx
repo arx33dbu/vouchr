@@ -132,23 +132,23 @@ export default function ContactList() {
 
     if (contact.status === "clicked_google") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
           <CheckCircle2 className="w-3 h-3" />
-          5★ Left Google Review
+          5★ Google Review
         </span>
       );
     }
     if (contact.status === "private_feedback") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
-          <AlertTriangle className="w-3 h-3" />
-          Private Feedback Received
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
+          <AlertTriangle className="w-3 h-3 text-amber-400" />
+          Private Feedback
         </span>
       );
     }
     if (isDue) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 animate-pulse">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
           <BellRing className="w-3 h-3 text-amber-400" />
           Day 3 Reminder Due
         </span>
@@ -156,7 +156,7 @@ export default function ContactList() {
     }
     if (contact.status === "reminder_sent") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
           <Clock className="w-3 h-3" />
           Reminder Sent
         </span>
@@ -164,14 +164,14 @@ export default function ContactList() {
     }
     if (contact.status === "request_sent") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
-          <Send className="w-3 h-3 text-slate-400" />
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-800 text-zinc-400 border border-zinc-700">
+          <Send className="w-3 h-3" />
           Request Sent
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800/60 text-slate-400 border border-slate-800">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-900 text-zinc-500 border border-zinc-800">
         Not Sent
       </span>
     );
@@ -182,10 +182,10 @@ export default function ContactList() {
       {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-white tracking-tight">
+          <h2 className="text-base font-bold text-white tracking-tight">
             Customer Contacts &amp; Follow-Ups
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-zinc-400">
             Send review requests right after job completion, with automated Day 3 reminders.
           </p>
         </div>
@@ -193,52 +193,52 @@ export default function ContactList() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setImportModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-800 flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-850 text-zinc-300 text-xs font-medium border border-zinc-800 flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-slate-400" />
+            <FileSpreadsheet className="w-3.5 h-3.5 text-zinc-400" />
             <span>CSV Import</span>
           </button>
 
           <button
             onClick={() => setAddModalOpen(true)}
-            className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all"
+            className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
           >
             <UserPlus className="w-3.5 h-3.5" />
-            <span>Add Customer</span>
+            <span>Add Client</span>
           </button>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-slate-900/60 border border-slate-800 rounded-xl">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-zinc-500" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, phone, or service..."
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+            placeholder="Search by client or service..."
+            className="w-full pl-8 pr-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-md text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
           />
         </div>
 
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
           <button
             onClick={() => setFilter("all")}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
               filter === "all"
-                ? "bg-amber-500 text-slate-950 font-bold"
-                : "bg-slate-800 text-slate-300 hover:bg-slate-750"
+                ? "bg-zinc-100 text-zinc-950 font-semibold"
+                : "bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800"
             }`}
           >
             All ({contacts.length})
           </button>
           <button
             onClick={() => setFilter("reminders")}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
               filter === "reminders"
-                ? "bg-amber-500 text-slate-950 font-bold"
-                : "bg-slate-800 text-amber-300 hover:bg-slate-750"
+                ? "bg-zinc-100 text-zinc-950 font-semibold"
+                : "bg-zinc-950 text-amber-300 hover:text-white border border-zinc-800"
             }`}
           >
             Due Reminders (
@@ -253,20 +253,20 @@ export default function ContactList() {
           </button>
           <button
             onClick={() => setFilter("reviewed")}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
               filter === "reviewed"
-                ? "bg-amber-500 text-slate-950 font-bold"
-                : "bg-slate-800 text-slate-300 hover:bg-slate-750"
+                ? "bg-zinc-100 text-zinc-950 font-semibold"
+                : "bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800"
             }`}
           >
             Reviewed ({contacts.filter((c) => c.status === "clicked_google").length})
           </button>
           <button
             onClick={() => setFilter("not_sent")}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
               filter === "not_sent"
-                ? "bg-amber-500 text-slate-950 font-bold"
-                : "bg-slate-800 text-slate-300 hover:bg-slate-750"
+                ? "bg-zinc-100 text-zinc-950 font-semibold"
+                : "bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800"
             }`}
           >
             Not Sent ({contacts.filter((c) => c.status === "not_sent").length})

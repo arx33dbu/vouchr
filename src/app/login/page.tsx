@@ -5,13 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useApp } from "@/lib/store";
 import { generateTrialKey } from "@/lib/utils";
 import {
-  Sparkles,
   Key,
   ArrowRight,
   ShieldCheck,
   Zap,
-  CheckCircle2,
-  Lock,
 } from "lucide-react";
 
 function LoginContent() {
@@ -19,13 +16,12 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const keyParam = searchParams.get("key") || searchParams.get("trial");
 
-  const { loginWithTrialKey, profile } = useApp();
+  const { loginWithTrialKey } = useApp();
 
   const [inputKey, setInputKey] = useState(keyParam || "");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Handle direct magic link access
   useEffect(() => {
     if (keyParam) {
       handleLogin(keyParam);
@@ -66,22 +62,18 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-4 font-sans relative overflow-hidden">
-      {/* Background glow dots */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col justify-center items-center p-4 font-sans selection:bg-zinc-800 selection:text-white">
+      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl shadow-sm p-6 sm:p-7">
         {/* Brand */}
-        <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-300 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/20 mb-3">
-            <Sparkles className="w-6 h-6 text-slate-950 font-bold" />
+        <div className="mb-6">
+          <div className="w-7 h-7 rounded-md bg-zinc-100 flex items-center justify-center text-zinc-950 font-black text-sm mb-3">
+            V
           </div>
-          <h1 className="text-2xl font-black text-white tracking-tight">
-            vouchr<span className="text-amber-400">.</span>
+          <h1 className="text-xl font-bold text-white tracking-tight">
+            Client Access Key
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Zero-Friction Access Key Login
+          <p className="text-xs text-zinc-400 mt-1">
+            Access your review dashboard and referral pipeline.
           </p>
         </div>
 
@@ -91,25 +83,25 @@ function LoginContent() {
             e.preventDefault();
             handleLogin(inputKey);
           }}
-          className="space-y-4"
+          className="space-y-3.5"
         >
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-              Enter Your Access / Trial Key
+            <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+              Access Key / Trial Code
             </label>
             <div className="relative">
-              <Key className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+              <Key className="w-3.5 h-3.5 absolute left-3 top-3 text-zinc-500" />
               <input
                 type="text"
                 required
                 value={inputKey}
                 onChange={(e) => setInputKey(e.target.value.toUpperCase())}
                 placeholder="e.g. TRIAL-8492"
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                className="w-full pl-8 pr-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
               />
             </div>
-            <p className="text-[11px] text-slate-500 mt-1">
-              No password needed upfront. Uses Firebase Anonymous authentication.
+            <p className="text-[11px] text-zinc-500 mt-1">
+              No password required upfront. Uses anonymous authentication.
             </p>
           </div>
 
@@ -122,44 +114,42 @@ function LoginContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
           >
             {loading ? (
-              <span>Logging in...</span>
+              <span>Connecting...</span>
             ) : (
               <>
-                <span>Access My Review Dashboard</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Access Dashboard</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </>
             )}
           </button>
         </form>
 
-        {/* Quick Launch Shortcuts */}
-        <div className="mt-6 pt-5 border-t border-slate-800 space-y-2.5">
+        {/* Shortcuts */}
+        <div className="mt-5 pt-4 border-t border-zinc-800 space-y-2">
           <button
             type="button"
             onClick={handleGenerateNewTrial}
-            className="w-full py-2.5 px-3 rounded-xl bg-slate-950 hover:bg-slate-850 border border-slate-800 text-xs text-amber-300 font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            className="w-full py-2 px-3 rounded-lg bg-zinc-950 hover:bg-zinc-850 border border-zinc-800 text-xs text-zinc-300 font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span>Generate New 14-Day Trial Key</span>
+            <Zap className="w-3.5 h-3.5 text-zinc-400" />
+            <span>Generate New 14-Day Key</span>
           </button>
 
           <button
             type="button"
             onClick={handleLaunchDemo}
-            className="w-full py-2.5 px-3 rounded-xl bg-slate-950/60 hover:bg-slate-800 border border-slate-800/80 text-xs text-slate-300 font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            className="w-full py-2 px-3 rounded-lg bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800/80 text-xs text-zinc-400 font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-slate-400" />
-            <span>Open Pre-Loaded Demo (Apex Detailing)</span>
+            <span>Open Demo Account (Apex Detailing)</span>
           </button>
         </div>
 
-        {/* Security / Terms */}
-        <div className="mt-6 flex items-center justify-center gap-2 text-[11px] text-slate-500">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>7 or 14-day free trial. Then $29/mo to keep active.</span>
+        <div className="mt-5 flex items-center justify-center gap-1.5 text-[11px] text-zinc-500">
+          <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
+          <span>14-day free trial • $29/mo recurring</span>
         </div>
       </div>
     </div>
@@ -170,8 +160,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-xs">
-          Loading Vouchr Trial Gateway...
+        <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-zinc-400 text-xs">
+          Loading login gateway...
         </div>
       }
     >

@@ -37,22 +37,22 @@ function DashboardContent() {
       label: "Contacts & Follow-Ups",
       icon: Users,
       badge: dueReminders > 0 ? `${dueReminders} due` : undefined,
-      badgeColor: "bg-amber-500 text-slate-950 font-bold",
+      badgeColor: "bg-amber-400 text-zinc-950 font-bold",
     },
-    { id: "funnel", label: "Smart Funnel", icon: Smartphone },
-    { id: "referrals", label: "B2C Referrals", icon: Gift },
+    { id: "funnel", label: "Review Funnel", icon: Smartphone },
+    { id: "referrals", label: "Client Referrals", icon: Gift },
     {
       id: "partner",
-      label: "B2B Partner Loop",
+      label: "B2B Partner Link",
       icon: Award,
-      badge: partnerStats.unlocked ? "VIP" : "Locked",
+      badge: partnerStats.unlocked ? "Active" : "Locked",
       badgeColor: partnerStats.unlocked
-        ? "bg-emerald-500 text-slate-950 font-bold"
-        : "bg-slate-800 text-slate-400",
+        ? "bg-emerald-400 text-zinc-950 font-bold"
+        : "bg-zinc-800 text-zinc-400",
     },
     {
       id: "feedback",
-      label: "Rating Shield Inbox",
+      label: "Complaints Shield",
       icon: ShieldAlert,
       badge: unresolvedFeedback > 0 ? `${unresolvedFeedback}` : undefined,
       badgeColor: "bg-rose-500 text-white font-bold",
@@ -61,12 +61,12 @@ function DashboardContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
         {/* Navigation Tabs Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-800 scrollbar-none">
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b border-zinc-800 scrollbar-none">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -74,13 +74,13 @@ function DashboardContent() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
-                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
-                    : "text-slate-400 hover:text-white hover:bg-slate-900"
+                    ? "bg-zinc-100 text-zinc-950 font-semibold"
+                    : "text-zinc-400 hover:text-white hover:bg-zinc-900 font-medium"
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? "text-slate-950" : "text-slate-400"}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-zinc-950" : "text-zinc-400"}`} />
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span

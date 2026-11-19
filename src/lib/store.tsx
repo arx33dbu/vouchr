@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useTransition } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   BusinessProfile,
   CustomerContact,
@@ -9,6 +9,7 @@ import {
   B2BPartnerStats,
   FunnelStats,
   TradeCategory,
+  ReferralStatus,
 } from "@/types";
 import {
   generateReferralCode,
@@ -28,7 +29,7 @@ const DEFAULT_PROFILE: BusinessProfile = {
   logoUrl: "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=150&auto=format&fit=crop&q=80",
   phone: "(555) 392-8172",
   email: "marcus@apexdetailing.com",
-  placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4", // Google Sydney / sample Place ID
+  placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4",
   googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4",
   onboardingCompleted: true,
   trialKey: "TRIAL-8492",
@@ -47,12 +48,12 @@ const DEFAULT_CONTACTS: CustomerContact[] = [
     name: "Alex Martinez",
     phone: "(555) 234-8891",
     email: "alex.m@gmail.com",
-    serviceRendered: "Full Ceramic Coating Package",
+    serviceRendered: "Ceramic Coating (2-Year)",
     serviceDate: "2026-11-16",
-    status: "reminder_due", // Sent 3 days ago, no click yet -> Day 3 reminder due!
+    status: "reminder_due",
     requestSentAt: "2026-11-16T14:00:00.000Z",
     referralCode: "ALEX-20",
-    notes: "Porsche 911 GT3. Very happy with initial handover.",
+    notes: "Porsche 911 GT3. Handover completed.",
   },
   {
     id: "c2",
@@ -61,10 +62,10 @@ const DEFAULT_CONTACTS: CustomerContact[] = [
     email: "sarah.j@outlook.com",
     serviceRendered: "Interior Deep Extraction & Steam Clean",
     serviceDate: "2026-11-16",
-    status: "reminder_due", // Sent 73h ago -> Reminder due
+    status: "reminder_due",
     requestSentAt: "2026-11-16T15:00:00.000Z",
     referralCode: "SARAH-20",
-    notes: "Kid spills removed from Subaru Outback.",
+    notes: "Subaru Outback.",
   },
   {
     id: "c3",
@@ -76,7 +77,7 @@ const DEFAULT_CONTACTS: CustomerContact[] = [
     status: "clicked_google",
     requestSentAt: "2026-11-18T18:00:00.000Z",
     referralCode: "DAVID-20",
-    notes: "Left 5-star review directly on Google Maps!",
+    notes: "Posted review on Google Maps.",
   },
   {
     id: "c4",
@@ -88,7 +89,7 @@ const DEFAULT_CONTACTS: CustomerContact[] = [
     status: "clicked_google",
     requestSentAt: "2026-11-17T11:00:00.000Z",
     referralCode: "ELENA-20",
-    notes: "BMW M4 owner. Mentioned bringing husband's truck next month.",
+    notes: "BMW M4 owner.",
   },
   {
     id: "c5",
@@ -100,7 +101,7 @@ const DEFAULT_CONTACTS: CustomerContact[] = [
     status: "private_feedback",
     requestSentAt: "2026-11-19T09:00:00.000Z",
     referralCode: "TOM-20",
-    notes: "Had a small smudge on rear quarter window. Sent private feedback.",
+    notes: "Submitted private feedback re: rear glass streak.",
   },
   {
     id: "c6",
@@ -122,7 +123,7 @@ const DEFAULT_CONTACTS: CustomerContact[] = [
     serviceRendered: "Full Interior Sanitization",
     serviceDate: "2026-11-19",
     status: "not_sent",
-    notes: "Just picked up keys 30 mins ago. Ready for review request.",
+    notes: "Ready for review dispatch.",
   },
 ];
 
@@ -134,7 +135,7 @@ const DEFAULT_FEEDBACK: PrivateFeedback[] = [
     customerEmail: "tmiller77@yahoo.com",
     rating: 2,
     feedback:
-      "The headlights look great, but I noticed a small water spot streak on my rear window after driving home. Would love if someone could wipe it down next time I swing by.",
+      "Headlights look good, but there was a streak on the rear quarter glass when I got home. Wanted to give you a heads up directly rather than post publicly.",
     submittedAt: "2026-11-19T13:00:00.000Z",
     resolved: false,
     contactId: "c5",
@@ -151,9 +152,12 @@ const DEFAULT_REFERRALS: B2CReferral[] = [
     discountAmount: 20,
     friendName: "Robert Vance",
     friendPhone: "(555) 789-0101",
-    status: "redeemed",
+    friendServiceNeeded: "Full Detail & Ceramic Sealant",
+    invoiceAmount: 220,
+    status: "purchased", // Service completed and paid -> REWARD UNLOCKED for David Chen!
     createdAt: "2026-11-18T19:00:00.000Z",
-    redeemedAt: "2026-11-19T11:00:00.000Z",
+    bookedAt: "2026-11-19T09:30:00.000Z",
+    purchasedAt: "2026-11-19T15:00:00.000Z",
   },
   {
     id: "ref_2",
@@ -162,8 +166,22 @@ const DEFAULT_REFERRALS: B2CReferral[] = [
     code: "ELENA-20",
     rewardAmount: 20,
     discountAmount: 20,
-    status: "active",
+    friendName: "Marcus Brody",
+    friendPhone: "(555) 321-9988",
+    friendServiceNeeded: "Paint Correction & Polish",
+    status: "job_booked", // Friend booked service with code, but hasn't had job done/paid yet -> Reward still LOCKED!
     createdAt: "2026-11-17T12:00:00.000Z",
+    bookedAt: "2026-11-19T11:00:00.000Z",
+  },
+  {
+    id: "ref_3",
+    referrerName: "Alex Martinez",
+    referrerPhone: "(555) 234-8891",
+    code: "ALEX-20",
+    rewardAmount: 20,
+    discountAmount: 20,
+    status: "active", // Code generated and active, waiting for a friend
+    createdAt: "2026-11-16T14:30:00.000Z",
   },
 ];
 
@@ -179,7 +197,6 @@ interface AppContextType {
   upgradeModalOpen: boolean;
   setOnboardingOpen: (open: boolean) => void;
   setUpgradeModalOpen: (open: boolean) => void;
-  // Actions
   loginWithTrialKey: (key: string) => Promise<boolean>;
   logout: () => void;
   completeOnboarding: (data: {
@@ -207,8 +224,12 @@ interface AppContextType {
   ) => void;
   resolveFeedback: (feedbackId: string) => void;
   createB2CReferral: (referrerName: string, phone?: string, email?: string) => B2CReferral;
-  redeemB2CReferral: (code: string, friendName: string, friendPhone: string) => boolean;
-  markRewardPaid: (referralId: string) => void;
+  bookFriendJob: (
+    code: string,
+    data: { name: string; phone: string; email?: string; serviceNeeded?: string; preferredDate?: string }
+  ) => { success: boolean; referral?: B2CReferral; error?: string };
+  markJobPurchased: (referralId: string, invoiceAmount: number) => void;
+  applyReferralCredit: (referralId: string) => void;
   upgradeToPaidSubscription: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   resetToDemo: () => void;
 }
@@ -223,7 +244,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [funnelStats, setFunnelStats] = useState<FunnelStats>({
     totalRequestsSent: 14,
     funnelViews: 19,
-    positiveClicks: 4, // 4 positive reviews so far! (Needs 5 to unlock B2B referral)
+    positiveClicks: 4,
     negativeFeedbackCount: 1,
     referralCodesShared: 6,
     googleReviewsAddedEstimate: 4,
@@ -233,7 +254,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
-  // Load from LocalStorage if exists
   useEffect(() => {
     try {
       const savedKey = localStorage.getItem("vouchr_current_trial_key") || "TRIAL-8492";
@@ -247,20 +267,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (parsed.referrals) setReferrals(parsed.referrals);
         if (parsed.funnelStats) setFunnelStats(parsed.funnelStats);
       } else {
-        // First time initializing
         saveStateToStorage(DEFAULT_PROFILE.trialKey, {
           profile: DEFAULT_PROFILE,
           contacts: DEFAULT_CONTACTS,
           feedback: DEFAULT_FEEDBACK,
           referrals: DEFAULT_REFERRALS,
-          funnelStats: {
-            totalRequestsSent: 14,
-            funnelViews: 19,
-            positiveClicks: 4,
-            negativeFeedbackCount: 1,
-            referralCodesShared: 6,
-            googleReviewsAddedEstimate: 4,
-          },
+          funnelStats,
         });
       }
     } catch (e) {
@@ -279,7 +291,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Sync state whenever key data changes
   useEffect(() => {
     if (!isLoading && profile?.trialKey) {
       saveStateToStorage(profile.trialKey, {
@@ -292,7 +303,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [profile, contacts, feedback, referrals, funnelStats, isLoading]);
 
-  // Partner Program stats derived from reviews count
   const reviewsCount = funnelStats.positiveClicks;
   const partnerStats: B2BPartnerStats = {
     unlocked: reviewsCount >= 5,
@@ -303,13 +313,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     monthsFreeEarned: reviewsCount >= 5 ? 2 : 0,
   };
 
-  // Login with trial key (Zero-Friction Trial Key Login)
   const loginWithTrialKey = async (trialKey: string): Promise<boolean> => {
     const cleanKey = trialKey.trim().toUpperCase();
     if (!cleanKey) return false;
 
-    // Call Firebase anonymous auth (or graceful fallback)
-    const authResult = await authenticateWithTrialKey(cleanKey);
+    await authenticateWithTrialKey(cleanKey);
 
     const saved = localStorage.getItem(STORAGE_KEY_PREFIX + cleanKey);
     if (saved) {
@@ -323,7 +331,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setOnboardingOpen(true);
       }
     } else {
-      // New brand-new trial key!
       const newProfile: BusinessProfile = {
         id: `biz_${cleanKey.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
         name: "",
@@ -332,7 +339,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         placeId: "",
         onboardingCompleted: false,
         trialKey: cleanKey,
-        trialStartDate: new Date().toISOString(),
+        trialStartDate: "2026-11-19T18:00:00.000Z",
         trialDurationDays: 14,
         isSubscribed: false,
         isAnonymousAuth: true,
@@ -361,7 +368,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("vouchr_current_trial_key");
-    // Reload or default
     setProfile(DEFAULT_PROFILE);
     setContacts(DEFAULT_CONTACTS);
     setFeedback(DEFAULT_FEEDBACK);
@@ -426,7 +432,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const importContacts = (
     raw: { name: string; phone: string; email: string; service: string }[]
   ) => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = "2026-11-19";
     const newItems: CustomerContact[] = raw.map((r, i) => ({
       id: `c_import_${Date.now()}_${i}`,
       name: r.name || "Customer",
@@ -440,9 +446,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setContacts((prev) => [...newItems, ...prev]);
   };
 
-  // Review request trigger
   const sendReviewRequest = (contactId: string) => {
-    const now = new Date().toISOString();
+    const now = "2026-11-19T18:00:00.000Z";
     setContacts((prev) =>
       prev.map((c) =>
         c.id === contactId
@@ -456,9 +461,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
-  // Day 3 reminder trigger for individual contact
   const triggerDay3Reminder = (contactId: string) => {
-    const now = new Date().toISOString();
+    const now = "2026-11-19T18:00:00.000Z";
     setContacts((prev) =>
       prev.map((c) =>
         c.id === contactId
@@ -468,9 +472,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  // Batch trigger for all Day 3 reminders
   const triggerBatchDay3Reminders = (): number => {
-    const now = new Date().toISOString();
+    const now = "2026-11-19T18:00:00.000Z";
     let count = 0;
     setContacts((prev) =>
       prev.map((c) => {
@@ -484,7 +487,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return count;
   };
 
-  // Public Funnel Analytics
   const recordFunnelVisit = (slug: string) => {
     setFunnelStats((prev) => ({
       ...prev,
@@ -492,7 +494,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
-  // 👍 High-intent customer clicked Google Review
   const recordPositiveReviewClick = (slug: string, contactId?: string) => {
     setFunnelStats((prev) => ({
       ...prev,
@@ -507,7 +508,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // 👎 Unhappy customer submitted private feedback
   const submitPrivateFeedback = (
     slug: string,
     data: { name: string; phone?: string; email?: string; rating: number; feedback: string }
@@ -519,7 +519,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       customerEmail: data.email,
       rating: data.rating,
       feedback: data.feedback,
-      submittedAt: new Date().toISOString(),
+      submittedAt: "2026-11-19T18:00:00.000Z",
       resolved: false,
     };
 
@@ -529,7 +529,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       negativeFeedbackCount: prev.negativeFeedbackCount + 1,
     }));
 
-    // Find contact if matches
     if (data.phone || data.email) {
       setContacts((prev) =>
         prev.map((c) =>
@@ -548,7 +547,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  // B2C Referral loop
+  // Create B2C Referral code for a customer
   const createB2CReferral = (
     referrerName: string,
     phone?: string,
@@ -564,7 +563,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       rewardAmount: profile.b2cReferralReward || 20,
       discountAmount: profile.b2cDiscountAmount || 20,
       status: "active",
-      createdAt: new Date().toISOString(),
+      createdAt: "2026-11-19T18:00:00.000Z",
     };
     setReferrals((prev) => [newRef, ...prev]);
     setFunnelStats((prev) => ({
@@ -574,40 +573,79 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return newRef;
   };
 
-  const redeemB2CReferral = (
+  // Friend submits booking with code -> status becomes 'job_booked'.
+  // Notice: The referrer reward is still LOCKED until the friend's job is purchased & paid!
+  const bookFriendJob = (
     code: string,
-    friendName: string,
-    friendPhone: string
-  ): boolean => {
+    data: { name: string; phone: string; email?: string; serviceNeeded?: string; preferredDate?: string }
+  ): { success: boolean; referral?: B2CReferral; error?: string } => {
     const upperCode = code.trim().toUpperCase();
-    let found = false;
+    let targetRef: B2CReferral | undefined = referrals.find(
+      (r) => r.code.toUpperCase() === upperCode
+    );
 
+    if (!targetRef) {
+      // Create on the fly if valid code format
+      targetRef = {
+        id: `ref_${Date.now()}`,
+        referrerName: "Client",
+        code: upperCode,
+        rewardAmount: profile.b2cReferralReward || 20,
+        discountAmount: profile.b2cDiscountAmount || 20,
+        status: "active",
+        createdAt: "2026-11-19T18:00:00.000Z",
+      };
+    }
+
+    const updatedRef: B2CReferral = {
+      ...targetRef,
+      friendName: data.name,
+      friendPhone: data.phone,
+      friendEmail: data.email,
+      friendServiceNeeded: data.serviceNeeded || "General Service",
+      friendPreferredDate: data.preferredDate,
+      status: "job_booked", // PENDING PURCHASE: Reward is locked until invoice is paid!
+      bookedAt: "2026-11-19T18:00:00.000Z",
+    };
+
+    setReferrals((prev) => {
+      const exists = prev.some((r) => r.id === updatedRef.id);
+      return exists
+        ? prev.map((r) => (r.id === updatedRef.id ? updatedRef : r))
+        : [updatedRef, ...prev];
+    });
+
+    return { success: true, referral: updatedRef };
+  };
+
+  // BUSINESS OWNER ACTION: Mark friend's job completed & paid -> OFFICIALLY UNLOCKS THE REWARD!
+  const markJobPurchased = (referralId: string, invoiceAmount: number) => {
     setReferrals((prev) =>
       prev.map((r) => {
-        if (r.code.toUpperCase() === upperCode && r.status === "active") {
-          found = true;
+        if (r.id === referralId) {
           return {
             ...r,
-            friendName,
-            friendPhone,
-            status: "redeemed",
-            redeemedAt: new Date().toISOString(),
+            status: "purchased", // UNLOCKED!
+            invoiceAmount,
+            purchasedAt: "2026-11-19T18:00:00.000Z",
           };
         }
         return r;
       })
     );
-
-    return found;
   };
 
-  const markRewardPaid = (referralId: string) => {
+  // Apply the $20 credit to the referrer's next invoice
+  const applyReferralCredit = (referralId: string) => {
     setReferrals((prev) =>
-      prev.map((r) => (r.id === referralId ? { ...r, status: "reward_paid" } : r))
+      prev.map((r) =>
+        r.id === referralId
+          ? { ...r, status: "credit_applied", rewardAppliedAt: "2026-11-19T18:00:00.000Z" }
+          : r
+      )
     );
   };
 
-  // Upgrades anonymous auth to permanent email/password account ($29/month)
   const upgradeToPaidSubscription = async (
     email: string,
     pass: string
@@ -674,8 +712,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         submitPrivateFeedback,
         resolveFeedback,
         createB2CReferral,
-        redeemB2CReferral,
-        markRewardPaid,
+        bookFriendJob,
+        markJobPurchased,
+        applyReferralCredit,
         upgradeToPaidSubscription,
         resetToDemo,
       }}

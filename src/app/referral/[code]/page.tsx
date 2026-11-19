@@ -3,16 +3,15 @@
 import React, { useState, use, Suspense } from "react";
 import { useApp } from "@/lib/store";
 import {
-  Gift,
-  CheckCircle2,
   Phone,
-  Sparkles,
-  ArrowRight,
   ShieldCheck,
-  Building,
-  Check,
+  CheckCircle2,
+  Calendar,
+  Wrench,
+  Clock,
+  ArrowRight,
+  Info,
 } from "lucide-react";
-import confetti from "canvas-confetti";
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -22,166 +21,227 @@ function CustomerReferralClaimContent({ params }: PageProps) {
   const resolvedParams = use(params);
   const code = resolvedParams.code.toUpperCase();
 
-  const { profile, referrals, redeemB2CReferral } = useApp();
+  const { profile, referrals, bookFriendJob } = useApp();
 
   const [friendName, setFriendName] = useState("");
   const [friendPhone, setFriendPhone] = useState("");
-  const [claimed, setClaimed] = useState(false);
+  const [friendEmail, setFriendEmail] = useState("");
+  const [serviceNeeded, setServiceNeeded] = useState("");
+  const [preferredDate, setPreferredDate] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  // Find matching referral if in store
   const matchedRef = referrals.find(
     (r) => r.code.toUpperCase() === code
   );
 
-  const referrerName = matchedRef?.referrerName || "A friend";
+  const referrerName = matchedRef?.referrerName || "A verified customer";
   const discountAmount = matchedRef?.discountAmount || profile.b2cDiscountAmount || 20;
 
-  const handleClaim = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!friendName.trim() || !friendPhone.trim()) return;
 
-    redeemB2CReferral(code, friendName.trim(), friendPhone.trim());
-    setClaimed(true);
-
-    confetti({
-      particleCount: 80,
-      spread: 60,
-      origin: { y: 0.6 },
+    bookFriendJob(code, {
+      name: friendName.trim(),
+      phone: friendPhone.trim(),
+      email: friendEmail.trim(),
+      serviceNeeded: serviceNeeded.trim() || "Service Appointment",
+      preferredDate,
     });
+
+    setSubmitted(true);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between p-4 sm:p-6 font-sans">
-      {/* Header */}
-      <header className="max-w-md w-full mx-auto flex items-center justify-between text-xs text-slate-500 py-2">
-        <span className="font-semibold text-slate-400">{profile.name}</span>
-        <span className="flex items-center gap-1 text-emerald-400 text-[11px]">
-          <Gift className="w-3.5 h-3.5" />
-          Verified Referral Discount
-        </span>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col justify-between p-4 sm:p-8 font-sans selection:bg-zinc-800 selection:text-white">
+      {/* Top Header */}
+      <header className="max-w-xl w-full mx-auto flex items-center justify-between text-xs text-zinc-400 border-b border-zinc-800/80 pb-4">
+        <div className="flex items-center gap-2.5">
+          {profile.logoUrl && (
+            <div className="w-7 h-7 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900 flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={profile.logoUrl}
+                alt={profile.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          <span className="font-semibold text-zinc-200 tracking-tight">
+            {profile.name}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-zinc-400">
+          <ShieldCheck className="w-3.5 h-3.5 text-zinc-300" />
+          <span>Client Referral Voucher</span>
+        </div>
       </header>
 
-      {/* Main Claim Card */}
-      <main className="max-w-md w-full mx-auto my-auto bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 text-center relative overflow-hidden">
-        {/* Accent Banner */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600" />
-
-        {/* Business Logo */}
-        <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto border-2 border-slate-700 shadow-md mb-3 bg-slate-950">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={
-              profile.logoUrl ||
-              "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=150&auto=format&fit=crop&q=80"
-            }
-            alt={profile.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="mb-5">
-          <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[11px] font-bold uppercase tracking-wider border border-emerald-500/20">
-            Special Invitation Voucher
-          </span>
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight mt-2">
-            {referrerName} gave you{" "}
-            <span className="text-emerald-400">${discountAmount} OFF</span>
-          </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Valid towards your next service at {profile.name}
-          </p>
-        </div>
-
-        {/* Voucher Ticket UI */}
-        <div className="my-5 p-4 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-slate-950 border-2 border-dashed border-emerald-500/40 relative">
-          <div className="flex items-center justify-between">
-            <div className="text-left">
-              <span className="text-[10px] uppercase font-bold text-slate-400">
-                Discount Voucher
-              </span>
-              <div className="text-3xl font-black text-white">
-                ${discountAmount} OFF
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="text-[10px] uppercase font-bold text-slate-400">
-                Voucher Code
-              </span>
-              <div className="font-mono text-base font-bold text-amber-400">
-                {code}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {claimed ? (
-          <div className="space-y-4 py-4 animate-in zoom-in-95">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto text-2xl">
-              ✓
-            </div>
+      {/* Main Container */}
+      <main className="max-w-xl w-full mx-auto my-8">
+        <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+          {/* Referral Voucher Tag */}
+          <div className="flex items-center justify-between gap-3 border-b border-zinc-800 pb-5 mb-6">
             <div>
-              <h2 className="text-lg font-bold text-white">
-                Voucher Claimed, {friendName}!
-              </h2>
-              <p className="text-xs text-slate-300 mt-1">
-                Your ${discountAmount} credit has been registered for your phone number ({friendPhone}). Mention code <strong>{code}</strong> when booking with {profile.name}.
+              <p className="text-xs uppercase tracking-wider font-semibold text-zinc-400">
+                New Client Discount
+              </p>
+              <h1 className="text-2xl font-bold text-white tracking-tight mt-1">
+                ${discountAmount} off your first service
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1">
+                Courtesy of referral from <strong className="text-zinc-200">{referrerName}</strong>
               </p>
             </div>
 
-            {profile.phone && (
-              <a
-                href={`tel:${profile.phone}`}
-                className="w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-lg"
-              >
-                <Phone className="w-4 h-4" />
-                <span>Call to Book Service: {profile.phone}</span>
-              </a>
-            )}
+            <div className="text-right flex-shrink-0">
+              <span className="text-[11px] text-zinc-500 uppercase tracking-wider block">
+                Voucher Code
+              </span>
+              <span className="font-mono text-sm font-bold text-zinc-200 bg-zinc-950 px-2.5 py-1 rounded-md border border-zinc-800 inline-block mt-0.5">
+                {code}
+              </span>
+            </div>
           </div>
-        ) : (
-          <form onSubmit={handleClaim} className="space-y-3.5 text-left">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Your Full Name
-              </label>
-              <input
-                type="text"
-                required
-                value={friendName}
-                onChange={(e) => setFriendName(e.target.value)}
-                placeholder="e.g. Robert Vance"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Your Mobile Phone (to claim voucher)
-              </label>
-              <input
-                type="text"
-                required
-                value={friendPhone}
-                onChange={(e) => setFriendPhone(e.target.value)}
-                placeholder="(555) 000-0000"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
+          {submitted ? (
+            <div className="space-y-5 py-4">
+              <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
+                <div className="flex items-center gap-2 text-zinc-200 font-semibold text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Voucher Attached to Your Booking Request</span>
+                </div>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Thank you, <strong>{friendName}</strong>. Our team has received your request for <em>{serviceNeeded || "service"}</em>. We will contact you at <strong>{friendPhone}</strong> to confirm your appointment time.
+                </p>
+              </div>
 
-            <button
-              type="submit"
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-            >
-              <span>Claim My ${discountAmount} Voucher</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
-        )}
+              {/* Purchase Rule Callout */}
+              <div className="p-4 rounded-xl bg-zinc-950/60 border border-zinc-800/80 text-xs text-zinc-400 space-y-1.5">
+                <div className="flex items-center gap-1.5 font-medium text-zinc-300">
+                  <Info className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>How your ${discountAmount} discount is applied:</span>
+                </div>
+                <ul className="list-disc pl-5 space-y-1 text-zinc-400 text-[11px]">
+                  <li>Your ${discountAmount} credit will be deducted directly on your final invoice upon service completion.</li>
+                  <li>Once your service is completed and payment is processed, {referrerName}&apos;s ${discountAmount} referral reward will be unlocked on their account.</li>
+                </ul>
+              </div>
+
+              {profile.phone && (
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+                  <span>Need immediate assistance?</span>
+                  <a
+                    href={`tel:${profile.phone}`}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-750 text-zinc-200 font-medium transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>Call Shop: {profile.phone}</span>
+                  </a>
+                </div>
+              )}
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800/80 text-xs text-zinc-300 leading-relaxed flex items-start gap-2.5">
+                <Info className="w-4 h-4 text-zinc-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  Enter your details below to schedule your appointment with <strong>{profile.name}</strong>. Your ${discountAmount} voucher will be deducted from your final invoice once the service is performed.
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    Your Name <span className="text-zinc-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={friendName}
+                    onChange={(e) => setFriendName(e.target.value)}
+                    placeholder="First and last name"
+                    className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    Phone Number <span className="text-zinc-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={friendPhone}
+                    onChange={(e) => setFriendPhone(e.target.value)}
+                    placeholder="(555) 000-0000"
+                    className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={friendEmail}
+                    onChange={(e) => setFriendEmail(e.target.value)}
+                    placeholder="email@example.com"
+                    className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    Service Needed
+                  </label>
+                  <input
+                    type="text"
+                    value={serviceNeeded}
+                    onChange={(e) => setServiceNeeded(e.target.value)}
+                    placeholder="e.g. Full Ceramic Coat, Brakes, Inspection"
+                    className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                  Preferred Appointment Date (Optional)
+                </label>
+                <input
+                  type="date"
+                  value={preferredDate}
+                  onChange={(e) => setPreferredDate(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-white focus:outline-none focus:border-zinc-500 transition-colors"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full py-2.5 px-4 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                >
+                  <span>Request Booking with ${discountAmount} Voucher</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <p className="text-[11px] text-zinc-500 text-center pt-1">
+                Discount applied at time of service completion. No upfront payment required.
+              </p>
+            </form>
+          )}
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="max-w-md w-full mx-auto text-center text-[10px] text-slate-600 py-3">
-        Powered by Vouchr Referral Network
+      <footer className="max-w-xl w-full mx-auto text-center text-[11px] text-zinc-500 border-t border-zinc-800/80 pt-4">
+        {profile.name} • Client Referral Program
       </footer>
     </div>
   );
@@ -191,7 +251,7 @@ export default function CustomerReferralClaimPage(props: PageProps) {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 text-slate-400 text-xs flex items-center justify-center">
+        <div className="min-h-screen bg-zinc-950 text-zinc-400 text-xs flex items-center justify-center">
           Loading referral voucher...
         </div>
       }
