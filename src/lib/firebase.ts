@@ -7,7 +7,6 @@ import {
   User,
   Auth,
 } from "firebase/auth";
-import { getAnalytics, isSupported as isAnalyticsSupported, Analytics } from "firebase/analytics";
 
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyA6tADx-PMl-OHrHkLBvvRcjvC8yE4SoPs",
@@ -27,23 +26,31 @@ export const isFirebaseConfigured = Boolean(
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
-let analytics: Analytics | null = null;
 
+// Safe client-only initialization
 if (typeof window !== "undefined") {
   try {
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
     auth = getAuth(app);
-    isAnalyticsSupported().then((supported) => {
-      if (supported && app) {
-        analytics = getAnalytics(app);
-      }
-    });
+
+    // Dynamically load analytics only in the browser to prevent edge/worker crashes
+    import("firebase/analytics")
+      .then(({ getAnalytics, isSupported }) => {
+        isSupported().then((supported) => {
+          if (supported && app) {
+            getAnalytics(app);
+          }
+        });
+      })
+      .catch(() => {
+        // Analytics not supported or blocked (e.g. adblocker)
+      });
   } catch (err) {
-    console.warn("Firebase initialization notice:", err);
+    console.warn("Firebase client initialization notice:", err);
   }
 }
 
-export { app, auth, analytics };
+export { app, auth };
 
 /**
  * Signs in anonymously with Firebase using the configured vouchrreview project.
@@ -70,7 +77,7 @@ export async function authenticateWithTrialKey(trialKey: string): Promise<{
         email: userCredential.user.email,
       };
     } catch (error) {
-      console.warn("Firebase Anonymous Auth note (ensure Anonymous sign-in is enabled in Firebase Console -> Authentication -> Sign-in method):", error);
+      console.warn("Firebase Anonymous Auth notice:", error);
     }
   }
 
