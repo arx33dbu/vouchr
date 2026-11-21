@@ -1,0 +1,4 @@
+# Cloudflare Pages / Workers Single-Page-Application rewrite rules
+/r/*          /r/demo/index.html         200
+/referral/*   /referral/demo/index.html   200
+/*            /index.html                200
