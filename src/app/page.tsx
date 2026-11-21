@@ -68,10 +68,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="pt-16 pb-20 px-4 sm:px-6 max-w-5xl mx-auto w-full text-center">
         <div className="space-y-6 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span>Built for local service businesses with under 20 Google reviews</span>
-          </div>
+
 
           <h1 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-[1.15]">
             Rank higher on Google Maps. <br className="hidden sm:inline" />
