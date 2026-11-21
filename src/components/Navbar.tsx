@@ -18,7 +18,7 @@ export default function Navbar() {
     profile,
     setUpgradeModalOpen,
     setOnboardingOpen,
-    resetToDemo,
+    resetToClean,
   } = useApp();
 
   const [daysLeft, setDaysLeft] = React.useState<number>(11);
@@ -107,8 +107,8 @@ export default function Navbar() {
             </button>
 
             <button
-              onClick={resetToDemo}
-              title="Reset sample demo data"
+              onClick={resetToClean}
+              title="Reset and start fresh account"
               className="p-1.5 text-zinc-400 hover:text-zinc-200 rounded-md hover:bg-zinc-900 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />

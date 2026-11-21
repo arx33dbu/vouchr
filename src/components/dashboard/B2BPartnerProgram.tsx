@@ -191,33 +191,9 @@ export default function B2BPartnerProgram() {
           Referred Business Accounts ({partnerStats.referredBusinessesCount})
         </h4>
 
-        {partnerStats.referredBusinessesCount === 0 ? (
-          <p className="text-xs text-zinc-500 py-2">
-            No partner accounts referred yet. Share your partner link to earn free monthly subscriptions.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-between text-xs">
-              <div>
-                <span className="font-semibold text-white">Timberline Roofing Co.</span>
-                <span className="text-[11px] text-zinc-500 ml-2">Subscribed • Paid Account</span>
-              </div>
-              <span className="text-emerald-400 font-medium">
-                1 Month Free Applied (Dec 2026)
-              </span>
-            </div>
-
-            <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-between text-xs">
-              <div>
-                <span className="font-semibold text-white">Ironclad Auto Repair</span>
-                <span className="text-[11px] text-zinc-500 ml-2">Subscribed • Paid Account</span>
-              </div>
-              <span className="text-emerald-400 font-medium">
-                1 Month Free Applied (Jan 2027)
-              </span>
-            </div>
-          </div>
-        )}
+        <p className="text-xs text-zinc-500 py-3 text-center">
+          No partner accounts referred yet. Share your partner link to earn free monthly subscriptions once your partner tier is unlocked.
+        </p>
       </div>
     </div>
   );

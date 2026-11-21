@@ -49,17 +49,12 @@ const AVATAR_PRESETS = [
 export default function OnboardingModal() {
   const { profile, onboardingOpen, setOnboardingOpen, completeOnboarding } = useApp();
 
-  const [name, setName] = useState(profile.name || "Apex Precision Auto Detailing");
+  const [name, setName] = useState(profile.name || "");
   const [trade, setTrade] = useState<TradeCategory>(profile.trade || "auto_detailing");
-  const [logoUrl, setLogoUrl] = useState(
-    profile.logoUrl ||
-      "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=150&auto=format&fit=crop&q=80"
-  );
-  const [rawGoogleInput, setRawGoogleInput] = useState(
-    profile.placeId || "ChIJN1t_tDeuEmsRUsoyG83frY4"
-  );
-  const [phone, setPhone] = useState(profile.phone || "(555) 392-8172");
-  const [extractedPlaceId, setExtractedPlaceId] = useState(profile.placeId || "ChIJN1t_tDeuEmsRUsoyG83frY4");
+  const [logoUrl, setLogoUrl] = useState(profile.logoUrl || "");
+  const [rawGoogleInput, setRawGoogleInput] = useState(profile.placeId || "");
+  const [phone, setPhone] = useState(profile.phone || "");
+  const [extractedPlaceId, setExtractedPlaceId] = useState(profile.placeId || "");
   const [showHelper, setShowHelper] = useState(false);
 
   if (!onboardingOpen) return null;
@@ -82,7 +77,7 @@ export default function OnboardingModal() {
     e.preventDefault();
     if (!name.trim()) return;
 
-    const finalPlaceId = extractedPlaceId || "ChIJN1t_tDeuEmsRUsoyG83frY4";
+    const finalPlaceId = extractedPlaceId || rawGoogleInput.trim();
 
     completeOnboarding({
       name: name.trim(),

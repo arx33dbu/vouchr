@@ -21,19 +21,19 @@ import { authenticateWithTrialKey, upgradeAnonymousToPermanent } from "@/lib/fir
 
 const STORAGE_KEY_PREFIX = "vouchr_data_";
 
-const DEFAULT_PROFILE: BusinessProfile = {
-  id: "biz_apex_detailing",
-  name: "Apex Precision Auto Detailing",
-  slug: "apex-detailing",
+const INITIAL_PROFILE: BusinessProfile = {
+  id: "",
+  name: "",
+  slug: "",
   trade: "auto_detailing",
-  logoUrl: "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=150&auto=format&fit=crop&q=80",
-  phone: "(555) 392-8172",
-  email: "marcus@apexdetailing.com",
-  placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4",
-  googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4",
-  onboardingCompleted: true,
-  trialKey: "TRIAL-8492",
-  trialStartDate: "2026-11-16T12:00:00.000Z",
+  logoUrl: "",
+  phone: "",
+  email: "",
+  placeId: "",
+  googleReviewUrl: "",
+  onboardingCompleted: false,
+  trialKey: "",
+  trialStartDate: "",
   trialDurationDays: 14,
   isSubscribed: false,
   isAnonymousAuth: true,
@@ -42,148 +42,14 @@ const DEFAULT_PROFILE: BusinessProfile = {
   b2cDiscountAmount: 20,
 };
 
-const DEFAULT_CONTACTS: CustomerContact[] = [
-  {
-    id: "c1",
-    name: "Alex Martinez",
-    phone: "(555) 234-8891",
-    email: "alex.m@gmail.com",
-    serviceRendered: "Ceramic Coating (2-Year)",
-    serviceDate: "2026-11-16",
-    status: "reminder_due",
-    requestSentAt: "2026-11-16T14:00:00.000Z",
-    referralCode: "ALEX-20",
-    notes: "Porsche 911 GT3. Handover completed.",
-  },
-  {
-    id: "c2",
-    name: "Sarah Jenkins",
-    phone: "(555) 872-1029",
-    email: "sarah.j@outlook.com",
-    serviceRendered: "Interior Deep Extraction & Steam Clean",
-    serviceDate: "2026-11-16",
-    status: "reminder_due",
-    requestSentAt: "2026-11-16T15:00:00.000Z",
-    referralCode: "SARAH-20",
-    notes: "Subaru Outback.",
-  },
-  {
-    id: "c3",
-    name: "David Chen",
-    phone: "(555) 441-9283",
-    email: "dchen@techcorp.io",
-    serviceRendered: "Two-Stage Paint Correction",
-    serviceDate: "2026-11-18",
-    status: "clicked_google",
-    requestSentAt: "2026-11-18T18:00:00.000Z",
-    referralCode: "DAVID-20",
-    notes: "Posted review on Google Maps.",
-  },
-  {
-    id: "c4",
-    name: "Elena Rostova",
-    phone: "(555) 782-4410",
-    email: "elena.rostova@icloud.com",
-    serviceRendered: "Executive Wash & Carnauba Wax",
-    serviceDate: "2026-11-17",
-    status: "clicked_google",
-    requestSentAt: "2026-11-17T11:00:00.000Z",
-    referralCode: "ELENA-20",
-    notes: "BMW M4 owner.",
-  },
-  {
-    id: "c5",
-    name: "Tom Miller",
-    phone: "(555) 601-3829",
-    email: "tmiller77@yahoo.com",
-    serviceRendered: "Headlight Restoration & Polish",
-    serviceDate: "2026-11-19",
-    status: "private_feedback",
-    requestSentAt: "2026-11-19T09:00:00.000Z",
-    referralCode: "TOM-20",
-    notes: "Submitted private feedback re: rear glass streak.",
-  },
-  {
-    id: "c6",
-    name: "Jessica Taylor",
-    phone: "(555) 912-3004",
-    email: "jtaylor@designstudio.co",
-    serviceRendered: "Maintenance Wash & Sealant",
-    serviceDate: "2026-11-19",
-    status: "request_sent",
-    requestSentAt: "2026-11-19T14:00:00.000Z",
-    referralCode: "JESS-20",
-    notes: "Tesla Model Y.",
-  },
-  {
-    id: "c7",
-    name: "Brian O'Connor",
-    phone: "(555) 555-1212",
-    email: "brian@speedshop.net",
-    serviceRendered: "Full Interior Sanitization",
-    serviceDate: "2026-11-19",
-    status: "not_sent",
-    notes: "Ready for review dispatch.",
-  },
-];
-
-const DEFAULT_FEEDBACK: PrivateFeedback[] = [
-  {
-    id: "fb_1",
-    customerName: "Tom Miller",
-    customerPhone: "(555) 601-3829",
-    customerEmail: "tmiller77@yahoo.com",
-    rating: 2,
-    feedback:
-      "Headlights look good, but there was a streak on the rear quarter glass when I got home. Wanted to give you a heads up directly rather than post publicly.",
-    submittedAt: "2026-11-19T13:00:00.000Z",
-    resolved: false,
-    contactId: "c5",
-  },
-];
-
-const DEFAULT_REFERRALS: B2CReferral[] = [
-  {
-    id: "ref_1",
-    referrerName: "David Chen",
-    referrerPhone: "(555) 441-9283",
-    code: "DAVID-20",
-    rewardAmount: 20,
-    discountAmount: 20,
-    friendName: "Robert Vance",
-    friendPhone: "(555) 789-0101",
-    friendServiceNeeded: "Full Detail & Ceramic Sealant",
-    invoiceAmount: 220,
-    status: "purchased", // Service completed and paid -> REWARD UNLOCKED for David Chen!
-    createdAt: "2026-11-18T19:00:00.000Z",
-    bookedAt: "2026-11-19T09:30:00.000Z",
-    purchasedAt: "2026-11-19T15:00:00.000Z",
-  },
-  {
-    id: "ref_2",
-    referrerName: "Elena Rostova",
-    referrerPhone: "(555) 782-4410",
-    code: "ELENA-20",
-    rewardAmount: 20,
-    discountAmount: 20,
-    friendName: "Marcus Brody",
-    friendPhone: "(555) 321-9988",
-    friendServiceNeeded: "Paint Correction & Polish",
-    status: "job_booked", // Friend booked service with code, but hasn't had job done/paid yet -> Reward still LOCKED!
-    createdAt: "2026-11-17T12:00:00.000Z",
-    bookedAt: "2026-11-19T11:00:00.000Z",
-  },
-  {
-    id: "ref_3",
-    referrerName: "Alex Martinez",
-    referrerPhone: "(555) 234-8891",
-    code: "ALEX-20",
-    rewardAmount: 20,
-    discountAmount: 20,
-    status: "active", // Code generated and active, waiting for a friend
-    createdAt: "2026-11-16T14:30:00.000Z",
-  },
-];
+const INITIAL_FUNNEL_STATS: FunnelStats = {
+  totalRequestsSent: 0,
+  funnelViews: 0,
+  positiveClicks: 0,
+  negativeFeedbackCount: 0,
+  referralCodesShared: 0,
+  googleReviewsAddedEstimate: 0,
+};
 
 interface AppContextType {
   profile: BusinessProfile;
@@ -231,24 +97,17 @@ interface AppContextType {
   markJobPurchased: (referralId: string, invoiceAmount: number) => void;
   applyReferralCredit: (referralId: string) => void;
   upgradeToPaidSubscription: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
-  resetToDemo: () => void;
+  resetToClean: () => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [profile, setProfile] = useState<BusinessProfile>(DEFAULT_PROFILE);
-  const [contacts, setContacts] = useState<CustomerContact[]>(DEFAULT_CONTACTS);
-  const [feedback, setFeedback] = useState<PrivateFeedback[]>(DEFAULT_FEEDBACK);
-  const [referrals, setReferrals] = useState<B2CReferral[]>(DEFAULT_REFERRALS);
-  const [funnelStats, setFunnelStats] = useState<FunnelStats>({
-    totalRequestsSent: 14,
-    funnelViews: 19,
-    positiveClicks: 4,
-    negativeFeedbackCount: 1,
-    referralCodesShared: 6,
-    googleReviewsAddedEstimate: 4,
-  });
+  const [profile, setProfile] = useState<BusinessProfile>(INITIAL_PROFILE);
+  const [contacts, setContacts] = useState<CustomerContact[]>([]);
+  const [feedback, setFeedback] = useState<PrivateFeedback[]>([]);
+  const [referrals, setReferrals] = useState<B2CReferral[]>([]);
+  const [funnelStats, setFunnelStats] = useState<FunnelStats>(INITIAL_FUNNEL_STATS);
 
   const [isLoading, setIsLoading] = useState(true);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
@@ -256,25 +115,71 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const savedKey = localStorage.getItem("vouchr_current_trial_key") || "TRIAL-8492";
-      const savedData = localStorage.getItem(STORAGE_KEY_PREFIX + savedKey);
+      if (typeof window === "undefined") return;
 
-      if (savedData) {
-        const parsed = JSON.parse(savedData);
-        if (parsed.profile) setProfile(parsed.profile);
-        if (parsed.contacts) setContacts(parsed.contacts);
-        if (parsed.feedback) setFeedback(parsed.feedback);
-        if (parsed.referrals) setReferrals(parsed.referrals);
-        if (parsed.funnelStats) setFunnelStats(parsed.funnelStats);
-      } else {
-        saveStateToStorage(DEFAULT_PROFILE.trialKey, {
-          profile: DEFAULT_PROFILE,
-          contacts: DEFAULT_CONTACTS,
-          feedback: DEFAULT_FEEDBACK,
-          referrals: DEFAULT_REFERRALS,
-          funnelStats,
-        });
+      // Purge old prototype mock data from previous sessions if present
+      localStorage.removeItem(STORAGE_KEY_PREFIX + "TRIAL-8492");
+      const currentStoredKey = localStorage.getItem("vouchr_current_trial_key");
+      if (currentStoredKey === "TRIAL-8492") {
+        localStorage.removeItem("vouchr_current_trial_key");
       }
+
+      const activeKey = localStorage.getItem("vouchr_current_trial_key");
+
+      if (activeKey) {
+        const savedData = localStorage.getItem(STORAGE_KEY_PREFIX + activeKey);
+        if (savedData) {
+          const parsed = JSON.parse(savedData);
+          if (parsed.profile && parsed.profile.id !== "biz_apex_detailing") {
+            setProfile(parsed.profile);
+            setContacts(parsed.contacts || []);
+            setFeedback(parsed.feedback || []);
+            setReferrals(parsed.referrals || []);
+            setFunnelStats(parsed.funnelStats || INITIAL_FUNNEL_STATS);
+            if (!parsed.profile.onboardingCompleted) {
+              setOnboardingOpen(true);
+            }
+            return;
+          }
+        }
+      }
+
+      // Fresh production initialization: generate unique trial key and trigger onboarding
+      const newTrialKey = generateTrialKey();
+      const freshProfile: BusinessProfile = {
+        id: `biz_${newTrialKey.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+        name: "",
+        slug: "",
+        trade: "auto_detailing",
+        logoUrl: "",
+        phone: "",
+        email: "",
+        placeId: "",
+        googleReviewUrl: "",
+        onboardingCompleted: false,
+        trialKey: newTrialKey,
+        trialStartDate: new Date().toISOString(),
+        trialDurationDays: 14,
+        isSubscribed: false,
+        isAnonymousAuth: true,
+        autoRemindDay3: true,
+        b2cReferralReward: 20,
+        b2cDiscountAmount: 20,
+      };
+
+      setProfile(freshProfile);
+      setContacts([]);
+      setFeedback([]);
+      setReferrals([]);
+      setFunnelStats(INITIAL_FUNNEL_STATS);
+      saveStateToStorage(newTrialKey, {
+        profile: freshProfile,
+        contacts: [],
+        feedback: [],
+        referrals: [],
+        funnelStats: INITIAL_FUNNEL_STATS,
+      });
+      setOnboardingOpen(true);
     } catch (e) {
       console.warn("Storage loading error:", e);
     } finally {
@@ -284,6 +189,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const saveStateToStorage = (key: string, data: Record<string, unknown>) => {
     try {
+      if (typeof window === "undefined" || !key) return;
       localStorage.setItem("vouchr_current_trial_key", key);
       localStorage.setItem(STORAGE_KEY_PREFIX + key, JSON.stringify(data));
     } catch (e) {
@@ -308,9 +214,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     unlocked: reviewsCount >= 5,
     reviewsCount,
     reviewsTarget: 5,
-    partnerCode: `PARTNER-${profile.slug.toUpperCase().slice(0, 8)}`,
-    referredBusinessesCount: reviewsCount >= 5 ? 2 : 0,
-    monthsFreeEarned: reviewsCount >= 5 ? 2 : 0,
+    partnerCode: profile.slug ? `PARTNER-${profile.slug.toUpperCase().slice(0, 8)}` : "PARTNER",
+    referredBusinessesCount: 0,
+    monthsFreeEarned: 0,
   };
 
   const loginWithTrialKey = async (trialKey: string): Promise<boolean> => {
@@ -326,7 +232,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setContacts(parsed.contacts || []);
       setFeedback(parsed.feedback || []);
       setReferrals(parsed.referrals || []);
-      setFunnelStats(parsed.funnelStats || funnelStats);
+      setFunnelStats(parsed.funnelStats || INITIAL_FUNNEL_STATS);
       if (!parsed.profile.onboardingCompleted) {
         setOnboardingOpen(true);
       }
@@ -336,10 +242,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         name: "",
         slug: "",
         trade: "auto_detailing",
+        logoUrl: "",
+        phone: "",
+        email: "",
         placeId: "",
+        googleReviewUrl: "",
         onboardingCompleted: false,
         trialKey: cleanKey,
-        trialStartDate: "2026-11-19T18:00:00.000Z",
+        trialStartDate: new Date().toISOString(),
         trialDurationDays: 14,
         isSubscribed: false,
         isAnonymousAuth: true,
@@ -351,14 +261,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setContacts([]);
       setFeedback([]);
       setReferrals([]);
-      setFunnelStats({
-        totalRequestsSent: 0,
-        funnelViews: 0,
-        positiveClicks: 0,
-        negativeFeedbackCount: 0,
-        referralCodesShared: 0,
-        googleReviewsAddedEstimate: 0,
-      });
+      setFunnelStats(INITIAL_FUNNEL_STATS);
       setOnboardingOpen(true);
     }
 
@@ -368,10 +271,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("vouchr_current_trial_key");
-    setProfile(DEFAULT_PROFILE);
-    setContacts(DEFAULT_CONTACTS);
-    setFeedback(DEFAULT_FEEDBACK);
-    setReferrals(DEFAULT_REFERRALS);
+    const freshKey = generateTrialKey();
+    const freshProfile = {
+      ...INITIAL_PROFILE,
+      id: `biz_${freshKey.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+      trialKey: freshKey,
+      trialStartDate: new Date().toISOString(),
+    };
+    setProfile(freshProfile);
+    setContacts([]);
+    setFeedback([]);
+    setReferrals([]);
+    setFunnelStats(INITIAL_FUNNEL_STATS);
+    setOnboardingOpen(true);
   };
 
   const completeOnboarding = (data: {
@@ -383,38 +295,41 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     phone?: string;
     email?: string;
   }) => {
-    const generatedSlug = slugify(data.name) || "my-service";
+    const slug = slugify(data.name) || `biz-${profile.trialKey.toLowerCase()}`;
     const googleReviewUrl =
-      data.googleReviewUrl?.trim() ||
-      (data.placeId
-        ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(data.placeId.trim())}`
-        : "");
+      data.googleReviewUrl ||
+      (data.placeId ? `https://search.google.com/local/writereview?placeid=${data.placeId}` : "");
 
-    setProfile((prev) => ({
-      ...prev,
+    const updated: BusinessProfile = {
+      ...profile,
       name: data.name,
-      slug: generatedSlug,
+      slug,
       trade: data.trade,
-      logoUrl: data.logoUrl || prev.logoUrl,
+      logoUrl: data.logoUrl || "",
       placeId: data.placeId,
       googleReviewUrl,
-      phone: data.phone || prev.phone,
-      email: data.email || prev.email,
+      phone: data.phone || "",
+      email: data.email || "",
       onboardingCompleted: true,
-    }));
+    };
+
+    setProfile(updated);
     setOnboardingOpen(false);
   };
 
   const updateProfile = (updates: Partial<BusinessProfile>) => {
-    setProfile((prev) => ({ ...prev, ...updates }));
+    setProfile((prev) => ({
+      ...prev,
+      ...updates,
+    }));
   };
 
   const addContact = (contact: Omit<CustomerContact, "id" | "referralCode">) => {
-    const refCode = generateReferralCode(contact.name);
+    const referralCode = generateReferralCode(contact.name);
     const newContact: CustomerContact = {
       ...contact,
-      id: `c_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      referralCode: refCode,
+      id: `c_${Date.now()}`,
+      referralCode,
     };
     setContacts((prev) => [newContact, ...prev]);
   };
@@ -432,7 +347,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const importContacts = (
     raw: { name: string; phone: string; email: string; service: string }[]
   ) => {
-    const today = "2026-11-19";
+    const today = new Date().toISOString().split("T")[0];
     const newItems: CustomerContact[] = raw.map((r, i) => ({
       id: `c_import_${Date.now()}_${i}`,
       name: r.name || "Customer",
@@ -447,7 +362,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const sendReviewRequest = (contactId: string) => {
-    const now = "2026-11-19T18:00:00.000Z";
+    const now = new Date().toISOString();
     setContacts((prev) =>
       prev.map((c) =>
         c.id === contactId
@@ -462,7 +377,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const triggerDay3Reminder = (contactId: string) => {
-    const now = "2026-11-19T18:00:00.000Z";
+    const now = new Date().toISOString();
     setContacts((prev) =>
       prev.map((c) =>
         c.id === contactId
@@ -473,7 +388,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const triggerBatchDay3Reminders = (): number => {
-    const now = "2026-11-19T18:00:00.000Z";
+    const now = new Date().toISOString();
     let count = 0;
     setContacts((prev) =>
       prev.map((c) => {
@@ -519,7 +434,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       customerEmail: data.email,
       rating: data.rating,
       feedback: data.feedback,
-      submittedAt: "2026-11-19T18:00:00.000Z",
+      submittedAt: new Date().toISOString(),
       resolved: false,
     };
 
@@ -547,7 +462,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  // Create B2C Referral code for a customer
   const createB2CReferral = (
     referrerName: string,
     phone?: string,
@@ -563,7 +477,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       rewardAmount: profile.b2cReferralReward || 20,
       discountAmount: profile.b2cDiscountAmount || 20,
       status: "active",
-      createdAt: "2026-11-19T18:00:00.000Z",
+      createdAt: new Date().toISOString(),
     };
     setReferrals((prev) => [newRef, ...prev]);
     setFunnelStats((prev) => ({
@@ -573,8 +487,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return newRef;
   };
 
-  // Friend submits booking with code -> status becomes 'job_booked'.
-  // Notice: The referrer reward is still LOCKED until the friend's job is purchased & paid!
   const bookFriendJob = (
     code: string,
     data: { name: string; phone: string; email?: string; serviceNeeded?: string; preferredDate?: string }
@@ -585,7 +497,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
 
     if (!targetRef) {
-      // Create on the fly if valid code format
       targetRef = {
         id: `ref_${Date.now()}`,
         referrerName: "Client",
@@ -593,7 +504,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         rewardAmount: profile.b2cReferralReward || 20,
         discountAmount: profile.b2cDiscountAmount || 20,
         status: "active",
-        createdAt: "2026-11-19T18:00:00.000Z",
+        createdAt: new Date().toISOString(),
       };
     }
 
@@ -604,8 +515,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       friendEmail: data.email,
       friendServiceNeeded: data.serviceNeeded || "General Service",
       friendPreferredDate: data.preferredDate,
-      status: "job_booked", // PENDING PURCHASE: Reward is locked until invoice is paid!
-      bookedAt: "2026-11-19T18:00:00.000Z",
+      status: "job_booked", // Reward locked until friend's job is purchased & paid!
+      bookedAt: new Date().toISOString(),
     };
 
     setReferrals((prev) => {
@@ -618,16 +529,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return { success: true, referral: updatedRef };
   };
 
-  // BUSINESS OWNER ACTION: Mark friend's job completed & paid -> OFFICIALLY UNLOCKS THE REWARD!
   const markJobPurchased = (referralId: string, invoiceAmount: number) => {
     setReferrals((prev) =>
       prev.map((r) => {
         if (r.id === referralId) {
           return {
             ...r,
-            status: "purchased", // UNLOCKED!
+            status: "purchased", // UNLOCKED upon completed purchase!
             invoiceAmount,
-            purchasedAt: "2026-11-19T18:00:00.000Z",
+            purchasedAt: new Date().toISOString(),
           };
         }
         return r;
@@ -635,12 +545,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  // Apply the $20 credit to the referrer's next invoice
   const applyReferralCredit = (referralId: string) => {
     setReferrals((prev) =>
       prev.map((r) =>
         r.id === referralId
-          ? { ...r, status: "credit_applied", rewardAppliedAt: "2026-11-19T18:00:00.000Z" }
+          ? { ...r, status: "credit_applied", rewardAppliedAt: new Date().toISOString() }
           : r
       )
     );
@@ -650,36 +559,36 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     email: string,
     pass: string
   ): Promise<{ success: boolean; error?: string }> => {
-    const result = await upgradeAnonymousToPermanent(email, pass);
-    if (result.success) {
-      setProfile((prev) => ({
-        ...prev,
-        isSubscribed: true,
-        subscriptionPlan: "starter_monthly_29",
-        userEmail: email,
-        isAnonymousAuth: false,
-      }));
-      setUpgradeModalOpen(false);
-      return { success: true };
+    const res = await upgradeAnonymousToPermanent(email, pass);
+    if (!res.success) {
+      return { success: false, error: res.error };
     }
-    return { success: false, error: result.error };
+
+    setProfile((prev) => ({
+      ...prev,
+      email,
+      isSubscribed: true,
+      isAnonymousAuth: false,
+    }));
+    setUpgradeModalOpen(false);
+    return { success: true };
   };
 
-  const resetToDemo = () => {
-    setProfile(DEFAULT_PROFILE);
-    setContacts(DEFAULT_CONTACTS);
-    setFeedback(DEFAULT_FEEDBACK);
-    setReferrals(DEFAULT_REFERRALS);
-    setFunnelStats({
-      totalRequestsSent: 14,
-      funnelViews: 19,
-      positiveClicks: 4,
-      negativeFeedbackCount: 1,
-      referralCodesShared: 6,
-      googleReviewsAddedEstimate: 4,
-    });
-    localStorage.removeItem(STORAGE_KEY_PREFIX + DEFAULT_PROFILE.trialKey);
-    localStorage.setItem("vouchr_current_trial_key", DEFAULT_PROFILE.trialKey);
+  const resetToClean = () => {
+    localStorage.removeItem("vouchr_current_trial_key");
+    const freshKey = generateTrialKey();
+    const freshProfile = {
+      ...INITIAL_PROFILE,
+      id: `biz_${freshKey.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+      trialKey: freshKey,
+      trialStartDate: new Date().toISOString(),
+    };
+    setProfile(freshProfile);
+    setContacts([]);
+    setFeedback([]);
+    setReferrals([]);
+    setFunnelStats(INITIAL_FUNNEL_STATS);
+    setOnboardingOpen(true);
   };
 
   return (
@@ -716,7 +625,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         markJobPurchased,
         applyReferralCredit,
         upgradeToPaidSubscription,
-        resetToDemo,
+        resetToClean,
       }}
     >
       {children}

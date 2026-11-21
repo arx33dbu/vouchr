@@ -55,10 +55,10 @@ export default function HomePage() {
             </Link>
 
             <button
-              onClick={() => handleStartTrial("TRIAL-8492")}
+              onClick={() => handleStartTrial()}
               className="px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <span>Explore Demo</span>
+              <span>Start Free Trial</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>

@@ -45,13 +45,11 @@ export default function ContactList() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [serviceRendered, setServiceRendered] = useState("");
-  const [serviceDate, setServiceDate] = useState("2026-11-19");
+  const [serviceDate, setServiceDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
 
   // Import Text Area
-  const [importText, setImportText] = useState(
-    "Marcus Vance, (555) 902-1144, marcus@vance.io, Brake Replacement\nChloe Bennet, (555) 304-9812, chloe@shield.org, Ceramic Coat & Tint\nLeo Fitz, (555) 771-0023, leo@sciencelab.edu, Annual HVAC Maintenance"
-  );
+  const [importText, setImportText] = useState("");
 
   const filteredContacts = contacts.filter((c) => {
     const matchesSearch =
@@ -549,6 +547,7 @@ export default function ContactList() {
                 rows={6}
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
+                placeholder="Marcus Vance, (555) 902-1144, marcus@vance.io, Brake Replacement&#10;Chloe Bennet, (555) 304-9812, chloe@shield.org, Ceramic Coat &amp; Tint"
                 className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-xs focus:outline-none focus:border-amber-500"
               />
 

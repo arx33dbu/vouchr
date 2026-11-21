@@ -57,10 +57,6 @@ function LoginContent() {
     handleLogin(newKey);
   };
 
-  const handleLaunchDemo = () => {
-    handleLogin("TRIAL-8492");
-  };
-
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col justify-center items-center p-4 font-sans selection:bg-zinc-800 selection:text-white">
       <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl shadow-sm p-6 sm:p-7">
@@ -136,14 +132,6 @@ function LoginContent() {
           >
             <Zap className="w-3.5 h-3.5 text-zinc-400" />
             <span>Generate New 14-Day Key</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleLaunchDemo}
-            className="w-full py-2 px-3 rounded-lg bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800/80 text-xs text-zinc-400 font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <span>Open Demo Account (Apex Detailing)</span>
           </button>
         </div>
 
