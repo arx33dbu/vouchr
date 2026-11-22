@@ -12,11 +12,8 @@ import {
   AlertTriangle,
   Clock,
   Search,
-  Filter,
   Copy,
   Trash2,
-  ExternalLink,
-  MessageSquare,
   FileSpreadsheet,
   Check,
   X,
@@ -31,7 +28,6 @@ export default function ContactList() {
     importContacts,
     sendReviewRequest,
     triggerDay3Reminder,
-    triggerBatchDay3Reminders,
   } = useApp();
 
   const [search, setSearch] = useState("");
@@ -101,6 +97,8 @@ export default function ContactList() {
 
   const handleImportSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!importText.trim()) return;
+
     const lines = importText.split("\n").filter((l) => l.trim().length > 0);
     const parsed = lines.map((line) => {
       const parts = line.split(",").map((p) => p.trim());
@@ -111,13 +109,15 @@ export default function ContactList() {
         service: parts[3] || "Service",
       };
     });
+
     importContacts(parsed);
+    setImportText("");
     setImportModalOpen(false);
   };
 
   const copyCustomerLink = (contact: CustomerContact) => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${origin}/r/${profile.slug}?c=${contact.id}&ref=${contact.referralCode || ""}`;
+    const url = `${origin}/r/${profile.slug}?c=${contact.id}&ref=${contact.referralCode}`;
     navigator.clipboard.writeText(url);
     setCopiedId(contact.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -131,22 +131,22 @@ export default function ContactList() {
     if (contact.status === "clicked_google") {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <CheckCircle2 className="w-3 h-3" />
-          5★ Google Review
+          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+          Google Review Clicked
         </span>
       );
     }
     if (contact.status === "private_feedback") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
-          <AlertTriangle className="w-3 h-3 text-amber-400" />
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
+          <AlertTriangle className="w-3 h-3 text-rose-400" />
           Private Feedback
         </span>
       );
     }
     if (isDue) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-500/10 text-amber-300 border border-amber-500/30">
           <BellRing className="w-3 h-3 text-amber-400" />
           Day 3 Reminder Due
         </span>
@@ -273,9 +273,9 @@ export default function ContactList() {
       </div>
 
       {/* Contacts Table */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
-        <table className="w-full text-left text-xs text-slate-300">
-          <thead className="bg-slate-950/80 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800">
+      <div className="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/40">
+        <table className="w-full text-left text-xs text-zinc-300">
+          <thead className="bg-zinc-950/80 text-zinc-400 uppercase font-medium text-[10px] tracking-wider border-b border-zinc-800">
             <tr>
               <th className="py-3 px-4">Customer</th>
               <th className="py-3 px-4">Service Rendered</th>
@@ -285,10 +285,10 @@ export default function ContactList() {
               <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60">
+          <tbody className="divide-y divide-zinc-800/60">
             {filteredContacts.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-slate-500">
+                <td colSpan={6} className="py-8 text-center text-zinc-500">
                   No customers found matching your filter.
                 </td>
               </tr>
@@ -305,14 +305,14 @@ export default function ContactList() {
                 return (
                   <tr
                     key={contact.id}
-                    className="hover:bg-slate-850/50 transition-colors group"
+                    className="hover:bg-zinc-850/50 transition-colors group"
                   >
                     {/* Customer Info */}
                     <td className="py-3.5 px-4">
                       <div className="font-semibold text-white">
                         {contact.name}
                       </div>
-                      <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                      <div className="text-[11px] text-zinc-400 flex items-center gap-2 mt-0.5">
                         <span>{contact.phone}</span>
                         {contact.email && <span>• {contact.email}</span>}
                       </div>
@@ -320,11 +320,11 @@ export default function ContactList() {
 
                     {/* Service */}
                     <td className="py-3.5 px-4">
-                      <span className="font-medium text-slate-200">
+                      <span className="font-medium text-zinc-200">
                         {contact.serviceRendered}
                       </span>
                       {contact.notes && (
-                        <p className="text-[10px] text-slate-500 italic truncate max-w-[180px]">
+                        <p className="text-[10px] text-zinc-500 italic truncate max-w-[180px]">
                           {contact.notes}
                         </p>
                       )}
@@ -334,15 +334,15 @@ export default function ContactList() {
                     <td className="py-3.5 px-4">{getStatusBadge(contact)}</td>
 
                     {/* Referral Code (B2C Loop) */}
-                    <td className="py-3.5 px-4 font-mono font-bold text-amber-400">
+                    <td className="py-3.5 px-4 font-mono font-medium text-zinc-300">
                       {contact.referralCode || "N/A"}
                     </td>
 
                     {/* Timeline */}
-                    <td className="py-3.5 px-4 text-[11px] text-slate-400">
+                    <td className="py-3.5 px-4 text-[11px] text-zinc-400">
                       <div>Job: {contact.serviceDate}</div>
                       {contact.requestSentAt && (
-                        <div className="text-slate-500">
+                        <div className="text-zinc-500">
                           Sent: {formatRelativeDate(contact.requestSentAt)}
                         </div>
                       )}
@@ -355,7 +355,7 @@ export default function ContactList() {
                         {contact.status === "not_sent" && (
                           <button
                             onClick={() => sendReviewRequest(contact.id)}
-                            className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1 transition-colors"
+                            className="px-2.5 py-1 rounded-md bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs flex items-center gap-1 transition-colors cursor-pointer"
                             title="Send Review Request via SMS"
                           >
                             <Send className="w-3 h-3" />
@@ -367,10 +367,10 @@ export default function ContactList() {
                         {isDue && (
                           <button
                             onClick={() => triggerDay3Reminder(contact.id)}
-                            className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-semibold text-xs flex items-center gap-1 transition-colors"
+                            className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-medium text-xs flex items-center gap-1 transition-colors cursor-pointer"
                             title="Send Day 3 Automated Follow-Up"
                           >
-                            <BellRing className="w-3 h-3 text-amber-400" />
+                            <BellRing className="w-3 h-3 text-zinc-400" />
                             <span>Send Day 3</span>
                           </button>
                         )}
@@ -378,7 +378,7 @@ export default function ContactList() {
                         {/* Copy direct personalized link */}
                         <button
                           onClick={() => copyCustomerLink(contact)}
-                          className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                          className="p-1.5 text-zinc-400 hover:text-white rounded-md hover:bg-zinc-800 transition-colors cursor-pointer"
                           title="Copy Direct Customer Review Link"
                         >
                           {copiedId === contact.id ? (
@@ -391,7 +391,7 @@ export default function ContactList() {
                         {/* Delete */}
                         <button
                           onClick={() => deleteContact(contact.id)}
-                          className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors opacity-0 group-hover:opacity-100"
+                          className="p-1.5 text-zinc-500 hover:text-rose-400 rounded-md hover:bg-zinc-800 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
                           title="Remove Customer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -408,16 +408,16 @@ export default function ContactList() {
 
       {/* Add Contact Modal */}
       {addModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <UserPlus className="w-4 h-4 text-amber-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in">
+          <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-zinc-400" />
                 Add Finished Job Customer
               </h3>
               <button
                 onClick={() => setAddModalOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-zinc-400 hover:text-white cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -425,7 +425,7 @@ export default function ContactList() {
 
             <form onSubmit={handleAddSubmit} className="p-5 space-y-3.5 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">
+                <label className="block text-zinc-300 font-medium mb-1">
                   Customer Name *
                 </label>
                 <input
@@ -433,84 +433,83 @@ export default function ContactList() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. John Miller"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
+                  placeholder="e.g. Robert Smith"
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">
-                    Phone (for SMS)
+                  <label className="block text-zinc-300 font-medium mb-1">
+                    Phone Number
                   </label>
                   <input
-                    type="text"
+                    type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="(555) 000-0000"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-zinc-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">
+                  <label className="block text-zinc-300 font-medium mb-1">
                     Email
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="john@example.com"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
+                    placeholder="client@example.com"
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-zinc-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">
+                <label className="block text-zinc-300 font-medium mb-1">
                   Service Rendered
                 </label>
                 <input
                   type="text"
                   value={serviceRendered}
                   onChange={(e) => setServiceRendered(e.target.value)}
-                  placeholder="e.g. Full Ceramic Coat or Roof Inspection"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
+                  placeholder="e.g. Brake Replacement or Ceramic Coating"
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-slate-300 font-semibold mb-1">
-                    Date of Job
-                  </label>
-                  <input
-                    type="date"
-                    value={serviceDate}
-                    onChange={(e) => setServiceDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-semibold mb-1">
-                    Job Notes
-                  </label>
-                  <input
-                    type="text"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Vehicle model, roof type, etc."
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+              <div>
+                <label className="block text-zinc-300 font-medium mb-1">
+                  Job Completed Date
+                </label>
+                <input
+                  type="date"
+                  value={serviceDate}
+                  onChange={(e) => setServiceDate(e.target.value)}
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-zinc-300 font-medium mb-1">
+                  Internal Notes (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="e.g. Returning client, truck owner"
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-zinc-500"
+                />
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  className="w-full py-2.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
-                  <span>Save Contact &amp; Generate Referral Code</span>
+                  <span>Save Client to Review Pipeline</span>
                 </button>
               </div>
             </form>
@@ -520,25 +519,25 @@ export default function ContactList() {
 
       {/* CSV Import Modal */}
       {importModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <FileSpreadsheet className="w-4 h-4 text-amber-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in">
+          <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                <FileSpreadsheet className="w-4 h-4 text-zinc-400" />
                 Bulk Import Customers
               </h3>
               <button
                 onClick={() => setImportModalOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-zinc-400 hover:text-white cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleImportSubmit} className="p-5 space-y-3 text-xs">
-              <p className="text-slate-400">
+              <p className="text-zinc-400">
                 Paste one customer per line format: <br />
-                <code className="text-amber-400 font-mono">
+                <code className="text-zinc-300 font-mono">
                   Name, Phone, Email, Service Rendered
                 </code>
               </p>
@@ -548,13 +547,13 @@ export default function ContactList() {
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
                 placeholder="Marcus Vance, (555) 902-1144, marcus@vance.io, Brake Replacement&#10;Chloe Bennet, (555) 304-9812, chloe@shield.org, Ceramic Coat &amp; Tint"
-                className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-xs focus:outline-none focus:border-amber-500"
+                className="w-full p-3 bg-zinc-950 border border-zinc-800 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-zinc-500"
               />
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  className="w-full py-2.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />
                   <span>Import Customers to Review Pipeline</span>

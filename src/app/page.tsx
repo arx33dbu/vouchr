@@ -8,15 +8,11 @@ import { generateTrialKey } from "@/lib/utils";
 import {
   ArrowRight,
   ShieldCheck,
-  Zap,
-  CheckCircle2,
-  Clock,
   Star,
+  CheckCircle2,
+  Send,
   Lock,
-  Unlock,
-  MessageSquare,
-  Users,
-  ChevronRight,
+  Gift,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -34,9 +30,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
-      {/* Top Header */}
+      {/* Header */}
       <header className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-md bg-zinc-100 flex items-center justify-center text-zinc-950 font-black text-sm">
               V
@@ -51,12 +47,12 @@ export default function HomePage() {
               href="/login"
               className="text-xs text-zinc-400 hover:text-white px-2.5 py-1.5 transition-colors font-medium"
             >
-              Have a Trial Key?
+              Have an Access Key?
             </Link>
 
             <button
               onClick={() => handleStartTrial()}
-              className="px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <span>Start Free Trial</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -66,224 +62,139 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-16 pb-20 px-4 sm:px-6 max-w-5xl mx-auto w-full text-center">
-        <div className="space-y-6 max-w-3xl mx-auto">
+      <section className="pt-20 pb-16 px-4 sm:px-6 max-w-4xl mx-auto w-full text-center space-y-6">
+        <h1 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-[1.15]">
+          Rank higher on Google Maps. <br className="hidden sm:inline" />
+          Protect your rating. Turn jobs into referrals.
+        </h1>
 
+        <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
+          Send a 1-tap review link after every completed job. Satisfied clients go straight to Google; unhappy clients send private feedback before hurting your public score.
+        </p>
 
-          <h1 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-[1.15]">
-            Rank higher on Google Maps. <br className="hidden sm:inline" />
-            Protect your rating &amp; turn jobs into referrals.
-          </h1>
+        {/* Start Trial Input Box */}
+        <div className="pt-2 max-w-md mx-auto">
+          <div className="p-1.5 bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col sm:flex-row items-center gap-2">
+            <input
+              type="text"
+              value={trialInput}
+              onChange={(e) => setTrialInput(e.target.value.toUpperCase())}
+              placeholder="Enter access key (or leave blank)"
+              className="w-full sm:flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800/80 rounded-lg text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-center sm:text-left"
+            />
+            <button
+              onClick={() => handleStartTrial()}
+              disabled={loading}
+              className="w-full sm:w-auto px-4 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 flex-shrink-0"
+            >
+              <span>Start Free 14-Day Trial</span>
+            </button>
+          </div>
 
-          <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            Send 1-tap review requests after every job. Happy clients go straight to Google; unhappy clients are intercepted privately before hurting your score. Turn every completed service into purchase-verified referral loops.
-          </p>
-
-          {/* Trial Input / Start Box */}
-          <div className="pt-3 max-w-md mx-auto">
-            <div className="p-1.5 bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col sm:flex-row items-center gap-2">
-              <input
-                type="text"
-                value={trialInput}
-                onChange={(e) => setTrialInput(e.target.value.toUpperCase())}
-                placeholder="Enter access key (or leave blank)"
-                className="w-full sm:flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800/80 rounded-lg text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-center sm:text-left"
-              />
-              <button
-                onClick={() => handleStartTrial()}
-                disabled={loading}
-                className="w-full sm:w-auto px-4 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 flex-shrink-0"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>Start Free Trial</span>
-              </button>
-            </div>
-
-            <div className="flex items-center justify-center gap-3 text-[11px] text-zinc-500 mt-3">
-              <span>No password upfront</span>
-              <span>•</span>
-              <span>15-second setup</span>
-              <span>•</span>
-              <span>$29/mo after 14-day trial</span>
-            </div>
+          <div className="flex items-center justify-center gap-2.5 text-[11px] text-zinc-500 mt-3">
+            <span>No password required</span>
+            <span>•</span>
+            <span>Instant setup</span>
+            <span>•</span>
+            <span>$29/month after 14-day trial</span>
           </div>
         </div>
       </section>
 
-      {/* Target Categories */}
-      <section className="py-6 border-y border-zinc-800/80 bg-zinc-900/30">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          <p className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium mb-3">
-            Designed for local trade and field service contractors
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-zinc-400">
-            <span className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800">
-              Auto Detailers
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800">
-              Mechanics &amp; Auto Repair
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800">
-              Roofing &amp; Siding
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800">
-              Plumbers
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800">
-              Landscaping &amp; Tree Care
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800">
-              Snow Removal
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800">
-              HVAC &amp; Electrical
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* Feature Breakdown */}
-      <section className="py-16 px-4 sm:px-6 max-w-5xl mx-auto w-full space-y-10">
-        <div className="space-y-1">
-          <h2 className="text-xs uppercase tracking-wider text-zinc-400 font-semibold">
-            System Architecture
-          </h2>
-          <p className="text-2xl font-bold text-white tracking-tight">
-            How Vouchr scales your local reputation and revenue
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Feature 1 */}
-          <div className="p-5 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              01. Trial Key Access
+      {/* 3 Core Steps Breakdown */}
+      <section className="py-12 border-t border-zinc-800/80 max-w-5xl mx-auto px-4 sm:px-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Pillar 1 */}
+          <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2.5">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300">
+              <Star className="w-4 h-4 text-zinc-300" />
             </div>
             <h3 className="text-sm font-semibold text-white">
-              Zero-Friction Client Onboarding
+              Smart Review Funnel
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Prospects access their dashboard using custom access keys (e.g., TRIAL-8492) or direct links with no password needed upfront. Uses Firebase Anonymous Auth, seamlessly upgrading (linkWithCredential) when subscribing.
+              Customers choose between a great experience or improvements needed. Positive feedback opens your direct Google review link in 1 tap.
             </p>
           </div>
 
-          {/* Feature 2 */}
-          <div className="p-5 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              02. 15-Second Setup
+          {/* Pillar 2 */}
+          <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2.5">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300">
+              <ShieldCheck className="w-4 h-4 text-zinc-300" />
             </div>
             <h3 className="text-sm font-semibold text-white">
-              Instant Place ID Extractor
+              Private Complaint Intercept
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Collects Business Name, Logo, and Google Maps Link / Place ID on first login. Parses Google URLs automatically to generate your direct review URL in under 15 seconds.
+              Unhappy clients are routed to a private message directly to you, keeping critical feedback off Google Maps so you can resolve issues privately.
             </p>
           </div>
 
-          {/* Feature 3 */}
-          <div className="p-5 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              03. Smart Funnel
+          {/* Pillar 3 */}
+          <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2.5">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300">
+              <Gift className="w-4 h-4 text-zinc-300" />
             </div>
             <h3 className="text-sm font-semibold text-white">
-              Protected Review Funnel (/r/[slug])
+              Purchase-Locked Referral Loop
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Clients tap 👍 or 👎. 👍 redirects straight to your direct Google Review dialog. 👎 opens a private feedback form alerting the owner directly, with compliant Google fallback links.
-            </p>
-          </div>
-
-          {/* Feature 4 */}
-          <div className="p-5 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              04. Automated Follow-Ups
-            </div>
-            <h3 className="text-sm font-semibold text-white">
-              Automated Day 3 Follow-Up
-            </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Dispatches SMS review requests right after job completion. Automatically flags contacts who haven&apos;t clicked after 72 hours for 1-click batch reminders.
-            </p>
-          </div>
-
-          {/* Feature 5 */}
-          <div className="p-5 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              05. Purchase-Verified B2C
-            </div>
-            <h3 className="text-sm font-semibold text-white">
-              Reward Unlocked On Purchase
-            </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Clients give a friend $20 off their service. Crucially, the referring client&apos;s $20 reward is <strong>only unlocked once the friend completes and pays for their service</strong>.
-            </p>
-          </div>
-
-          {/* Feature 6 */}
-          <div className="p-5 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              06. B2B Viral Loop
-            </div>
-            <h3 className="text-sm font-semibold text-white">
-              5-Review Milestone Partner Tier
-            </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Once a trade business collects 5 new Google reviews, they unlock a VIP Partner Link: &quot;Refer another business owner—they get 1 month free, and you get 1 month free once they subscribe.&quot;
+              Happy customers unlock a unique $20 discount voucher to give friends. The referring client&apos;s $20 reward unlocks only once the friend completes and pays for their service.
             </p>
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section className="py-14 px-4 sm:px-6 max-w-xl mx-auto w-full text-center">
-        <div className="p-6 sm:p-8 rounded-2xl bg-zinc-900 border border-zinc-800 text-left space-y-4">
+      <section className="py-14 px-4 sm:px-6 max-w-md mx-auto w-full text-center">
+        <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800 text-left space-y-4">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
             <div>
-              <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                Subscription Plan
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                Full Access Subscription
               </span>
               <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
                 $29 / month
               </h2>
             </div>
-            <span className="text-xs text-zinc-400 bg-zinc-950 px-2.5 py-1 rounded-md border border-zinc-800 font-medium">
+            <span className="text-xs text-zinc-300 bg-zinc-950 px-2.5 py-1 rounded-md border border-zinc-800 font-medium">
               14-Day Free Trial
             </span>
           </div>
 
           <p className="text-xs text-zinc-400 leading-relaxed">
-            One extra detailing client, brake repair, or plumbing call easily covers 12 months of service.
+            One extra detailing job, brake replacement, or plumbing service covers your entire yearly subscription.
           </p>
 
           <div className="space-y-2 text-xs text-zinc-300 pt-1">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Unlimited review funnels &amp; QR dispatches</span>
+              <span>Unlimited customer review requests &amp; funnels</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Automated Day 3 unclicked follow-up engine</span>
+              <span>Automated Day 3 follow-up reminders</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Private complaint shield (keeps 1-star ratings off Google)</span>
+              <span>Private complaint shield (keeps complaints off Google)</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Purchase-verified B2C client referral tracker</span>
+              <span>Purchase-verified client referral tracking</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
-              <span>B2B Partner Link unlocked at 5 reviews</span>
+              <span>B2B partner referral milestone tier</span>
             </div>
           </div>
 
-          <div className="pt-3">
+          <div className="pt-2">
             <button
-              onClick={() => handleStartTrial("TRIAL-8492")}
+              onClick={() => handleStartTrial()}
               className="w-full py-2.5 px-4 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
-              <span>Launch 14-Day Free Trial</span>
+              <span>Launch Free Trial</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -291,8 +202,8 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800/80 py-6 px-4 text-center text-xs text-zinc-500">
-        Vouchr • Reviews &amp; Referral Automation for Local Trades
+      <footer className="border-t border-zinc-800/80 py-5 px-4 text-center text-xs text-zinc-500">
+        Vouchr • Review &amp; Referral Engine for Local Trades
       </footer>
     </div>
   );

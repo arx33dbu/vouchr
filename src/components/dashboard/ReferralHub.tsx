@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useApp } from "@/lib/store";
 import { B2CReferral, ReferralStatus } from "@/types";
+import B2BPartnerProgram from "@/components/dashboard/B2BPartnerProgram";
 import {
   Plus,
   Copy,
@@ -17,17 +18,20 @@ import {
   AlertCircle,
   FileCheck,
   X,
+  Award,
 } from "lucide-react";
 
 export default function ReferralHub() {
   const {
     profile,
     referrals,
+    partnerStats,
     createB2CReferral,
     markJobPurchased,
     applyReferralCredit,
   } = useApp();
 
+  const [subTab, setSubTab] = useState<"b2c" | "b2b">("b2c");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [purchaseModalRef, setPurchaseModalRef] = useState<B2CReferral | null>(null);
   const [invoiceAmountInput, setInvoiceAmountInput] = useState<number>(200);
@@ -115,9 +119,38 @@ export default function ReferralHub() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-zinc-900 border border-zinc-800 rounded-xl">
+    <div className="space-y-5">
+      {/* Referral Program Switcher */}
+      <div className="flex items-center gap-1.5 p-1 bg-zinc-900 border border-zinc-800 rounded-lg w-fit">
+        <button
+          onClick={() => setSubTab("b2c")}
+          className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+            subTab === "b2c"
+              ? "bg-zinc-100 text-zinc-950 font-semibold"
+              : "text-zinc-400 hover:text-white"
+          }`}
+        >
+          Customer Referral Vouchers
+        </button>
+        <button
+          onClick={() => setSubTab("b2b")}
+          className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
+            subTab === "b2b"
+              ? "bg-zinc-100 text-zinc-950 font-semibold"
+              : "text-zinc-400 hover:text-white"
+          }`}
+        >
+          <Award className="w-3.5 h-3.5" />
+          <span>B2B Partner Link</span>
+        </button>
+      </div>
+
+      {subTab === "b2b" ? (
+        <B2BPartnerProgram />
+      ) : (
+        <>
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-zinc-900 border border-zinc-800 rounded-xl">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
@@ -449,6 +482,8 @@ export default function ReferralHub() {
             </form>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

@@ -84,17 +84,17 @@ export const TRADE_INFO: Record<
   TradeCategory,
   { label: string; icon: string; avgTicket: number }
 > = {
-  auto_detailing: { label: "Auto Detailing", icon: "✨", avgTicket: 180 },
-  mechanic: { label: "Auto Mechanic", icon: "🔧", avgTicket: 350 },
-  roofing: { label: "Roofing & Siding", icon: "🏠", avgTicket: 6500 },
-  plumbing: { label: "Plumbing Services", icon: "🚰", avgTicket: 275 },
-  landscaping: { label: "Lawn & Landscaping", icon: "🌱", avgTicket: 220 },
-  snow_removal: { label: "Snow Removal", icon: "❄️", avgTicket: 150 },
-  hvac: { label: "HVAC & Heating/Air", icon: "❄️🔥", avgTicket: 450 },
-  electrician: { label: "Electrical Pro", icon: "⚡", avgTicket: 320 },
-  cleaning: { label: "Home / Office Cleaning", icon: "🧹", avgTicket: 190 },
-  general_contractor: { label: "General Contractor", icon: "🔨", avgTicket: 2400 },
-  other: { label: "Local Trade & Service", icon: "⭐", avgTicket: 250 },
+  auto_detailing: { label: "Auto Detailing", icon: "", avgTicket: 180 },
+  mechanic: { label: "Auto Mechanic", icon: "", avgTicket: 350 },
+  roofing: { label: "Roofing & Siding", icon: "", avgTicket: 6500 },
+  plumbing: { label: "Plumbing Services", icon: "", avgTicket: 275 },
+  landscaping: { label: "Lawn & Landscaping", icon: "", avgTicket: 220 },
+  snow_removal: { label: "Snow Removal", icon: "", avgTicket: 150 },
+  hvac: { label: "HVAC & Heating/Air", icon: "", avgTicket: 450 },
+  electrician: { label: "Electrical Pro", icon: "", avgTicket: 320 },
+  cleaning: { label: "Home / Office Cleaning", icon: "", avgTicket: 190 },
+  general_contractor: { label: "General Contractor", icon: "", avgTicket: 2400 },
+  other: { label: "Local Trade & Service", icon: "", avgTicket: 250 },
 };
 
 const getSafeCurrentTime = () =>
